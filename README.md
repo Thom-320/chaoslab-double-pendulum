@@ -34,7 +34,14 @@ Dependencia de sistema para video:
 ffmpeg -version
 ```
 
-Si ese comando no existe, instala FFmpeg antes de renderizar MP4. Manim queda como ruta opcional; la entrega principal no depende de Manim.
+Dependencia de sistema para el informe PDF:
+
+```bash
+latexmk -v
+pdflatex --version
+```
+
+Si FFmpeg no existe, instala FFmpeg antes de renderizar MP4. Si `latexmk` o `pdflatex` no existen, instala una distribucion LaTeX antes de regenerar `report/informe_final.pdf`. Manim queda como ruta opcional; la entrega principal no depende de Manim.
 
 ## Generar figuras y GIF
 
@@ -87,6 +94,8 @@ python scripts/render_pitch_video.py
 Entregables finales:
 
 ```text
+report/latex/informe_final.tex
+report/latex/references.bib
 report/informe_final.md
 report/informe_final.pdf
 slides/presentacion_final.pdf
@@ -109,6 +118,7 @@ scripts/smoke_test.py
 app.py
 docs/propuesta.md
 slides/guion_5_min.md
+report/latex/informe_final.tex
 report/informe_final.md
 presentation/index.html
 ```

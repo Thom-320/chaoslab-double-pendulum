@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 import re
+import shutil
+import subprocess
 
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
@@ -23,6 +25,9 @@ from reportlab.lib.utils import ImageReader
 ROOT = Path(__file__).resolve().parents[1]
 REPORT_MD = ROOT / "report" / "informe_final.md"
 REPORT_PDF = ROOT / "report" / "informe_final.pdf"
+REPORT_LATEX_DIR = ROOT / "report" / "latex"
+REPORT_LATEX = REPORT_LATEX_DIR / "informe_final.tex"
+REPORT_LATEX_PDF = REPORT_LATEX_DIR / "informe_final.pdf"
 SLIDES_PDF = ROOT / "slides" / "presentacion_final.pdf"
 
 BG = colors.HexColor("#05050a")
@@ -278,6 +283,31 @@ def build_slides_pdf() -> None:
         c.showPage()
 
     c.save()
+
+
+def build_report_pdf() -> None:
+    REPORT_PDF.parent.mkdir(exist_ok=True)
+    if not REPORT_LATEX.exists():
+        raise FileNotFoundError(f"Missing LaTeX report source: {REPORT_LATEX}")
+
+    latexmk = shutil.which("latexmk")
+    if latexmk is None:
+        raise RuntimeError("latexmk is required to build report/informe_final.pdf from LaTeX")
+
+    subprocess.run(
+        [
+            latexmk,
+            "-pdf",
+            "-interaction=nonstopmode",
+            "-halt-on-error",
+            REPORT_LATEX.name,
+        ],
+        cwd=REPORT_LATEX_DIR,
+        check=True,
+    )
+    if not REPORT_LATEX_PDF.exists():
+        raise FileNotFoundError(f"LaTeX did not produce {REPORT_LATEX_PDF}")
+    shutil.copy2(REPORT_LATEX_PDF, REPORT_PDF)
 
 
 def main() -> None:
