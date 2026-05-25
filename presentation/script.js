@@ -58,7 +58,47 @@ function clear(ctx, w, h) {
 }
 
 function mapPoint(x, y, w, h, scale = 170, ox = w * 0.5, oy = h * 0.5) {
-  return [ox + x * scale, oy + y * scale];
+  return [ox + x * scale, oy - y * scale];
+}
+
+function drawDashedVertical(ctx, x, y, length, color = "oklch(73% 0.025 275)") {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = 0.52;
+  ctx.lineWidth = 1.4;
+  ctx.setLineDash([7, 8]);
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x, y + length);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawAngleArc(ctx, cx, cy, ex, ey, radius, label, color) {
+  const down = Math.PI / 2;
+  const bar = Math.atan2(ey - cy, ex - cx);
+  const start = Math.min(down, bar);
+  const end = Math.max(down, bar);
+  const mid = (start + end) / 2;
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, start, end);
+  ctx.stroke();
+  ctx.font = "17px ui-monospace, monospace";
+  ctx.fillText(label, cx + Math.cos(mid) * (radius + 14) - 10, cy + Math.sin(mid) * (radius + 14) + 6);
+  ctx.restore();
+}
+
+function drawLabel(ctx, text, x, y, color = "oklch(94% 0.01 90)", align = "center") {
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.font = "18px ui-monospace, monospace";
+  ctx.textAlign = align;
+  ctx.fillText(text, x, y);
+  ctx.restore();
 }
 
 function drawPendulum(ctx, series, idx, w, h, options = {}) {
@@ -84,6 +124,12 @@ function drawPendulum(ctx, series, idx, w, h, options = {}) {
 
   const [x1, y1] = mapPoint(series.x1[idx], series.y1[idx], w, h, scale, ox, oy);
   const [x2, y2] = mapPoint(series.x2[idx], series.y2[idx], w, h, scale, ox, oy);
+  if (options.angles) {
+    drawDashedVertical(ctx, ox, oy, scale * 0.72);
+    drawDashedVertical(ctx, x1, y1, scale * 0.58);
+    drawAngleArc(ctx, ox, oy, x1, y1, Math.min(58, scale * 0.3), "\u03b8\u2081", "oklch(82% 0.16 205)");
+    drawAngleArc(ctx, x1, y1, x2, y2, Math.min(48, scale * 0.25), "\u03b8\u2082", "oklch(84% 0.16 85)");
+  }
   ctx.strokeStyle = "oklch(94% 0.01 90)";
   ctx.lineWidth = 3;
   ctx.beginPath();
@@ -102,6 +148,95 @@ function drawPendulum(ctx, series, idx, w, h, options = {}) {
   ctx.fill();
 }
 
+function drawGeometry(ctx, elapsed, w, h) {
+  const cx = w * 0.68;
+  const cy = h * 0.23;
+  const L1 = Math.min(w, h) * 0.23;
+  const L2 = Math.min(w, h) * 0.20;
+  const theta1 = 0.78 + 0.08 * Math.sin(elapsed * 0.8);
+  const theta2 = -0.56 + 0.07 * Math.cos(elapsed * 0.9);
+  const x1 = L1 * Math.sin(theta1);
+  const y1 = L1 * Math.cos(theta1);
+  const x2 = x1 + L2 * Math.sin(theta2);
+  const y2 = y1 + L2 * Math.cos(theta2);
+  const p1x = cx + x1;
+  const p1y = cy + y1;
+  const p2x = cx + x2;
+  const p2y = cy + y2;
+  const phase = Math.min(1, (elapsed % 6) / 4.8);
+
+  ctx.save();
+  ctx.lineCap = "round";
+  drawDashedVertical(ctx, cx, cy, L1 * 1.1);
+  drawDashedVertical(ctx, p1x, p1y, L2 * 1.0);
+  drawAngleArc(ctx, cx, cy, p1x, p1y, 64, "\u03b8\u2081", "oklch(82% 0.16 205)");
+  drawAngleArc(ctx, p1x, p1y, p2x, p2y, 48, "\u03b8\u2082", "oklch(84% 0.16 85)");
+
+  ctx.strokeStyle = "oklch(94% 0.01 90)";
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(p1x, p1y);
+  ctx.lineTo(p2x, p2y);
+  ctx.stroke();
+
+  ctx.fillStyle = "oklch(72% 0.22 335)";
+  ctx.beginPath();
+  ctx.arc(p1x, p1y, 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "oklch(84% 0.16 85)";
+  ctx.beginPath();
+  ctx.arc(p2x, p2y, 10, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.setLineDash([8, 8]);
+  ctx.lineWidth = 2;
+  ctx.globalAlpha = 0.82;
+  if (phase > 0.12) {
+    ctx.strokeStyle = "oklch(82% 0.16 205)";
+    ctx.beginPath();
+    ctx.moveTo(cx, p1y);
+    ctx.lineTo(p1x, p1y);
+    ctx.stroke();
+    drawLabel(ctx, "x\u2081", (cx + p1x) / 2, p1y + 27, "oklch(82% 0.16 205)");
+  }
+  if (phase > 0.28) {
+    ctx.strokeStyle = "oklch(72% 0.22 335)";
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx, p1y);
+    ctx.stroke();
+    drawLabel(ctx, "y\u2081", cx - 28, (cy + p1y) / 2, "oklch(72% 0.22 335)", "right");
+  }
+  if (phase > 0.48) {
+    ctx.strokeStyle = "oklch(84% 0.16 85)";
+    ctx.beginPath();
+    ctx.moveTo(p1x, p2y);
+    ctx.lineTo(p2x, p2y);
+    ctx.stroke();
+    drawLabel(ctx, "L\u2082 sin(\u03b8\u2082)", (p1x + p2x) / 2, p2y + 27, "oklch(84% 0.16 85)");
+  }
+  if (phase > 0.64) {
+    ctx.strokeStyle = "oklch(78% 0.18 145)";
+    ctx.beginPath();
+    ctx.moveTo(p1x, p1y);
+    ctx.lineTo(p1x, p2y);
+    ctx.stroke();
+    drawLabel(ctx, "-L\u2082 cos(\u03b8\u2082)", p1x - 25, (p1y + p2y) / 2, "oklch(78% 0.18 145)", "right");
+  }
+  if (phase > 0.78) {
+    ctx.setLineDash([]);
+    ctx.strokeStyle = "oklch(78% 0.18 145)";
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(p2x, p2y);
+    ctx.stroke();
+    drawLabel(ctx, "(x\u2082, y\u2082)", p2x + 16, p2y - 18, "oklch(94% 0.01 90)", "left");
+  }
+  ctx.restore();
+}
+
 function drawSimple(ctx, elapsed, w, h) {
   const simple = data.simple;
   const idx = Math.floor((elapsed * 48) % simple.x.length);
@@ -110,6 +245,8 @@ function drawSimple(ctx, elapsed, w, h) {
   const scale = Math.min(w, h) * 0.24;
   const x = ox + simple.x[idx] * scale;
   const y = oy - simple.y[idx] * scale;
+
+  drawDashedVertical(ctx, ox, oy, scale * 0.72);
 
   ctx.strokeStyle = "oklch(94% 0.01 90)";
   ctx.lineWidth = 4;
@@ -136,13 +273,16 @@ function drawSimple(ctx, elapsed, w, h) {
 
   ctx.strokeStyle = "oklch(84% 0.16 85)";
   ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.arc(ox, oy, 52, Math.PI / 2, Math.PI / 2 + simple.theta[idx]);
-  ctx.stroke();
+  drawAngleArc(ctx, ox, oy, x, y, 52, "\u03b8", "oklch(84% 0.16 85)");
 }
 
-function drawChart(ctx, values, labels, elapsed, w, h, mode = "linear") {
-  const pad = { left: 90, right: 70, top: 150, bottom: 110 };
+function drawChart(ctx, values, labels, elapsed, w, h, mode = "linear", placement = "full", cursor = false) {
+  const pad =
+    placement === "right"
+      ? { left: w * 0.46, right: 70, top: 150, bottom: 110 }
+      : placement === "left"
+        ? { left: 90, right: w * 0.43, top: 150, bottom: 110 }
+        : { left: 90, right: 70, top: 150, bottom: 110 };
   const x0 = pad.left;
   const y0 = h - pad.bottom;
   const cw = w - pad.left - pad.right;
@@ -177,6 +317,39 @@ function drawChart(ctx, values, labels, elapsed, w, h, mode = "linear") {
     ctx.fillStyle = series.color;
     ctx.fillText(labels[si], x0 + 24 + si * 118, pad.top - 24);
   });
+
+  if (cursor) {
+    const x = x0 + ((end - 1) / (count - 1)) * cw;
+    ctx.save();
+    ctx.strokeStyle = "oklch(84% 0.16 85)";
+    ctx.globalAlpha = 0.75;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([5, 7]);
+    ctx.beginPath();
+    ctx.moveTo(x, pad.top);
+    ctx.lineTo(x, y0);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function drawEomOverlay(ctx, elapsed, w, h) {
+  const x = w * 0.64;
+  const y = h * 0.58;
+  const pulse = 0.55 + 0.45 * Math.sin(elapsed * 2.1) ** 2;
+  ctx.save();
+  ctx.font = "20px ui-monospace, monospace";
+  ctx.fillStyle = "oklch(94% 0.01 90)";
+  ctx.fillText("ecuaciones acopladas", x, y);
+  ctx.font = "18px ui-monospace, monospace";
+  ctx.fillStyle = "oklch(82% 0.16 205)";
+  ctx.fillText("\u03b8\u0308\u2081 = f(\u03b8\u2081, \u03b8\u2082, \u03c9\u2081, \u03c9\u2082)", x, y + 44);
+  ctx.fillStyle = "oklch(84% 0.16 85)";
+  ctx.fillText("\u03b8\u0308\u2082 = g(\u03b8\u2081, \u03b8\u2082, \u03c9\u2081, \u03c9\u2082)", x, y + 82);
+  ctx.globalAlpha = pulse;
+  ctx.fillStyle = "oklch(72% 0.22 335)";
+  ctx.fillText("terminos cruzados + senos/cosenos", x, y + 126);
+  ctx.restore();
 }
 
 function renderScene(name, ctx, elapsed, w, h) {
@@ -208,8 +381,9 @@ function renderScene(name, ctx, elapsed, w, h) {
       oy: h * 0.32,
       scale: Math.min(w, h) * 0.18,
       trail: 80,
+      angles: true,
     });
-    const labels = ["theta1", "omega1", "theta2", "omega2"];
+    const labels = ["\u03b8\u2081", "\u03c9\u2081", "\u03b8\u2082", "\u03c9\u2082"];
     labels.forEach((label, i) => {
       const x = w * 0.56 + (i % 2) * Math.min(185, w * 0.13);
       const y = h * 0.62 + Math.floor(i / 2) * 78 + Math.sin(elapsed * 2 + i) * 5;
@@ -222,13 +396,19 @@ function renderScene(name, ctx, elapsed, w, h) {
     });
   }
 
+  if (name === "geometry") {
+    drawGeometry(ctx, elapsed, w, h);
+  }
+
   if (name === "simulation") {
     drawPendulum(ctx, { x1: dbl.x1, y1: dbl.y1, x2: dbl.x2, y2: dbl.y2 }, idx, w, h, {
       ox: w * 0.58,
       oy: h * 0.28,
       scale: Math.min(w, h) * 0.2,
       trail: 220,
+      angles: true,
     });
+    drawEomOverlay(ctx, elapsed, w, h);
   }
 
   if (name === "energy") {
@@ -242,11 +422,29 @@ function renderScene(name, ctx, elapsed, w, h) {
       ["cinetica", "potencial", "total"],
       elapsed,
       w,
-      h
+      h,
+      "linear",
+      "right"
     );
   }
 
   if (name === "divergence") {
+    drawPendulum(ctx, { x1: dbl.x1, y1: dbl.y1, x2: dbl.x2, y2: dbl.y2 }, idx, w, h, {
+      ox: w * 0.78,
+      oy: h * 0.28,
+      scale: Math.min(w, h) * 0.12,
+      trail: 70,
+      color: "oklch(82% 0.16 205)",
+      bob: "oklch(84% 0.16 85)",
+    });
+    drawPendulum(ctx, { x1: dbl.xb1, y1: dbl.yb1, x2: dbl.xb2, y2: dbl.yb2 }, idx, w, h, {
+      ox: w * 0.78,
+      oy: h * 0.28,
+      scale: Math.min(w, h) * 0.12,
+      trail: 70,
+      color: "oklch(78% 0.18 145)",
+      bob: "oklch(78% 0.18 145)",
+    });
     drawChart(
       ctx,
       [{ y: data.divergence.delta, color: "oklch(78% 0.18 145)", width: 3 }],
@@ -254,7 +452,9 @@ function renderScene(name, ctx, elapsed, w, h) {
       elapsed,
       w,
       h,
-      "log"
+      "log",
+      "left",
+      true
     );
   }
 

@@ -173,6 +173,39 @@ code,
   font-size: clamp(20px, 2.3vw, 34px);
 }
 
+.equation.long {
+  font-size: clamp(17px, 1.65vw, 24px);
+}
+
+.state-vector sub,
+.equation sub {
+  font-size: 0.68em;
+}
+
+.formula-stack {
+  margin-top: 22px;
+  display: grid;
+  gap: 8px;
+  color: var(--gold);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.formula-stack p {
+  margin: 0;
+  max-width: 100%;
+  color: var(--gold);
+  font-size: clamp(16px, 1.55vw, 23px);
+  line-height: 1.25;
+}
+
+.formula-stack span {
+  color: var(--cyan);
+}
+
+.formula-stack sub {
+  font-size: 0.72em;
+}
+
 .sources {
   color: var(--green);
 }
