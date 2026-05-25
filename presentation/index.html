@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ChaosLab - Presentacion animada</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main id="deck" aria-live="polite">
+      <section class="slide is-active" data-scene="hook">
+        <canvas class="scene-canvas" data-canvas="hook"></canvas>
+        <div class="claim">
+          <p class="kicker">0:00 - Hook</p>
+          <h1>Mismas leyes, futuros distintos</h1>
+          <p>Una diferencia inicial de <code>1e-6 rad</code> puede volverse macroscopica.</p>
+        </div>
+        <aside class="notes">Dos sistemas casi iguales se separan. La pregunta no es si las leyes fallan, sino por que amplifican diferencias pequenas.</aside>
+      </section>
+
+      <section class="slide" data-scene="simple">
+        <canvas class="scene-canvas" data-canvas="simple"></canvas>
+        <div class="claim right">
+          <p class="kicker">0:25 - Fisica I base</p>
+          <h2>Primero, el caso ordenado</h2>
+          <p>El pendulo simple conecta angulo, velocidad angular, gravedad y energia.</p>
+          <p class="equation">omega = d theta / dt</p>
+          <p class="equation">sin(theta) ~= theta</p>
+        </div>
+        <aside class="notes">Esta escena ancla el proyecto en Fisica I y Calculo I: derivadas, oscilacion y aproximacion de angulo pequeno.</aside>
+      </section>
+
+      <section class="slide" data-scene="state">
+        <canvas class="scene-canvas" data-canvas="state"></canvas>
+        <div class="claim">
+          <p class="kicker">0:55 - Segunda masa</p>
+          <h2>Agregar una barra cambia el juego</h2>
+          <p>El estado pasa de una coordenada a cuatro variables acopladas.</p>
+          <p class="state-vector">s(t) = [theta1, omega1, theta2, omega2]</p>
+        </div>
+        <aside class="notes">No cambiamos de leyes. Seguimos con gravedad, energia y rotacion, pero ahora los grados de libertad se acoplan.</aside>
+      </section>
+
+      <section class="slide" data-scene="simulation">
+        <canvas class="scene-canvas" data-canvas="simulation"></canvas>
+        <div class="claim compact">
+          <p class="kicker">1:25 - Simulacion numerica</p>
+          <h2>Resolver, no dibujar a mano</h2>
+          <p><code>solve_ivp</code> integra el sistema como problema de valor inicial.</p>
+        </div>
+        <aside class="notes">Cada frame sale del modelo fisico. La animacion es visualizacion de una solucion numerica.</aside>
+      </section>
+
+      <section class="slide" data-scene="energy">
+        <canvas class="scene-canvas" data-canvas="energy"></canvas>
+        <div class="claim compact">
+          <p class="kicker">2:05 - Control de calidad</p>
+          <h2>La energia total casi no se mueve</h2>
+          <p>Si el integrador inventara energia, no podriamos confiar en el caos observado.</p>
+        </div>
+        <aside class="notes">La energia total es el ancla de confianza. La divergencia no se debe a que el modelo viole la conservacion de energia.</aside>
+      </section>
+
+      <section class="slide" data-scene="divergence">
+        <canvas class="scene-canvas" data-canvas="divergence"></canvas>
+        <div class="claim right compact">
+          <p class="kicker">2:45 - Sensibilidad</p>
+          <h2>Delta(t) crece</h2>
+          <p>Medimos la separacion entre dos estados casi identicos en escala logaritmica.</p>
+        </div>
+        <aside class="notes">No lo llamamos exponente de Lyapunov formal. Es una evidencia cuantitativa de sensibilidad a condiciones iniciales.</aside>
+      </section>
+
+      <section class="slide" data-scene="map">
+        <div class="map-stage">
+          <img src="../figures/flip_time_fractal_map.png" alt="Mapa de condiciones iniciales del pendulo doble" />
+          <div class="map-scan"></div>
+        </div>
+        <div class="claim compact">
+          <p class="kicker">3:35 - Observable finale</p>
+          <h2>Un mapa de futuros</h2>
+          <p>Color = tiempo hasta el primer flip. Las fronteras revelan sensibilidad.</p>
+        </div>
+        <aside class="notes">Este es el momento 2swap: una regla determinista local produce una imagen global compleja.</aside>
+      </section>
+
+      <section class="slide" data-scene="close">
+        <canvas class="scene-canvas" data-canvas="close"></canvas>
+        <div class="claim center">
+          <p class="kicker">4:35 - Cierre</p>
+          <h2>Deterministico no significa predecible</h2>
+          <p>La fisica da las reglas. La computacion revela sus consecuencias.</p>
+          <p class="sources">Fisica I + Calculo I + EDOs + visualizacion cientifica</p>
+        </div>
+        <aside class="notes">Cerrar con limitaciones: sin rozamiento, mapa exploratorio, validacion por video como trabajo futuro.</aside>
+      </section>
+    </main>
+
+    <nav class="chrome" aria-label="Controles de presentacion">
+      <button id="prev" type="button" aria-label="Anterior">Anterior</button>
+      <div class="progress"><span id="progress-bar"></span></div>
+      <output id="counter">1 / 8</output>
+      <button id="notes-toggle" type="button">Notas</button>
+      <button id="next" type="button" aria-label="Siguiente">Siguiente</button>
+    </nav>
+
+    <div id="notes-panel" class="notes-panel" hidden></div>
+
+    <script src="data/chaos_data.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
