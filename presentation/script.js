@@ -432,21 +432,23 @@ function drawChart(ctx, values, labels, elapsed, w, h, mode = "linear", placemen
 /* ── Coupled equations overlay ── */
 
 function drawEomOverlay(ctx, elapsed, w, h) {
-  const x = w * 0.64;
-  const y = h * 0.58;
+  const x = w * 0.62;
+  const y = h * 0.56;
+  const fadeIn = Math.min(1, elapsed / 1.5);
   const pulse = 0.55 + 0.45 * Math.sin(elapsed * 2.1) ** 2;
   ctx.save();
-  ctx.font = "20px 'Fira Code', monospace";
+  ctx.globalAlpha = fadeIn;
+  ctx.font = "19px 'Fira Code', monospace";
   ctx.fillStyle = "oklch(95% 0.015 285)";
   ctx.fillText("ecuaciones acopladas", x, y);
-  ctx.font = "18px 'Fira Code', monospace";
+  ctx.font = "17px 'Fira Code', monospace";
   ctx.fillStyle = "oklch(85% 0.14 200)";
-  ctx.fillText("\u03b8\u0308\u2081 = f(\u03b8\u2081, \u03b8\u2082, \u03c9\u2081, \u03c9\u2082)", x, y + 44);
+  ctx.fillText("\u03b8\u0308\u2081 = f(\u03b8\u2081, \u03b8\u2082, \u03c9\u2081, \u03c9\u2082)", x, y + 38);
   ctx.fillStyle = "oklch(80% 0.15 80)";
-  ctx.fillText("\u03b8\u0308\u2082 = g(\u03b8\u2081, \u03b8\u2082, \u03c9\u2081, \u03c9\u2082)", x, y + 82);
-  ctx.globalAlpha = pulse;
+  ctx.fillText("\u03b8\u0308\u2082 = g(\u03b8\u2081, \u03b8\u2082, \u03c9\u2081, \u03c9\u2082)", x, y + 70);
+  ctx.globalAlpha = fadeIn * pulse;
   ctx.fillStyle = "oklch(72% 0.18 335)";
-  ctx.fillText("términos cruzados + senos/cosenos", x, y + 126);
+  ctx.fillText("términos cruzados + senos/cosenos", x, y + 110);
   ctx.restore();
 }
 
@@ -858,12 +860,12 @@ function renderScene(name, ctx, elapsed, w, h) {
   if (name === "periodic-orbits") {
     clear(ctx, w, h);
     const sims = [
-      { id: "#sim-pretzel", data: data.stable },
-      { id: "#sim-shoelace", data: data.stable2 },
-      { id: "#sim-heart", data: data.stable3 }
+      { id: "#sim-pretzel", data: data.stable, trail: 500, speed: 24, color: "oklch(85% 0.14 200)", bob: "oklch(85% 0.14 200)" },
+      { id: "#sim-shoelace", data: data.stable2, trail: 400, speed: 28, color: "oklch(80% 0.15 80)", bob: "oklch(80% 0.15 80)" },
+      { id: "#sim-heart", data: data.stable3, trail: 350, speed: 20, color: "oklch(72% 0.18 335)", bob: "oklch(72% 0.18 335)" },
     ];
 
-    sims.forEach((sim, idx) => {
+    sims.forEach((sim) => {
       const canvas = document.querySelector(sim.id);
       if (!canvas || !sim.data) return;
 
@@ -879,13 +881,12 @@ function renderScene(name, ctx, elapsed, w, h) {
       mctx.setTransform(DPR, 0, 0, DPR, 0, 0);
       mctx.clearRect(0, 0, rect.width, rect.height);
 
-      const sidx = Math.floor((elapsed * 32) % sim.data.x1.length);
-      const colors = ["oklch(85% 0.14 200)", "oklch(80% 0.15 80)", "oklch(78% 0.15 145)"];
+      const sidx = Math.floor((elapsed * sim.speed) % sim.data.x1.length);
 
       drawPendulum(mctx, sim.data, sidx, rect.width, rect.height, {
         ox: rect.width * 0.5, oy: rect.height * 0.44,
         scale: Math.min(rect.width, rect.height) * 0.38,
-        trail: 400, color: colors[idx], bob: "oklch(95% 0.015 285)",
+        trail: sim.trail, color: sim.color, bob: sim.bob,
       });
       mctx.restore();
     });
@@ -893,17 +894,18 @@ function renderScene(name, ctx, elapsed, w, h) {
 
   if (name === "close") {
     const cx = w * 0.5;
-    const cy = h * 0.46;
-    const r = Math.min(w, h) * 0.18;
+    const cy = h * 0.44;
+    const r = Math.min(w, h) * 0.22;
     const colors = ["oklch(85% 0.14 200)", "oklch(80% 0.15 80)", "oklch(72% 0.18 335)", "oklch(78% 0.15 145)"];
     for (let i = 0; i < 4; i += 1) {
       ctx.save();
       ctx.strokeStyle = colors[i];
       ctx.shadowColor = colors[i];
-      ctx.shadowBlur = 8;
-      ctx.lineWidth = 2;
+      ctx.shadowBlur = 14;
+      ctx.lineWidth = 2.2;
+      ctx.globalAlpha = 0.7 + 0.3 * Math.sin(elapsed * 0.6 + i * 1.2);
       ctx.beginPath();
-      ctx.ellipse(cx, cy, r * (1 + i * 0.18), r * (0.42 + i * 0.08), elapsed * 0.35 + i, 0, Math.PI * 2);
+      ctx.ellipse(cx, cy, r * (1 + i * 0.22), r * (0.38 + i * 0.1), elapsed * 0.28 + i * 0.9, 0, Math.PI * 2);
       ctx.stroke();
       ctx.restore();
     }

@@ -273,13 +273,7 @@ sub { font-size: 0.6em; vertical-align: sub; }
 }
 
 .map-scan {
-  position: absolute; z-index: 3;
-  width: 1px; height: 100%;
-  background: var(--cyan);
-  box-shadow: 0 0 20px var(--cyan);
-  animation: scan 6s var(--ease) infinite alternate;
-  opacity: 0.6;
-  pointer-events: none;
+  display: none; /* Canvas renders its own synced scan line */
 }
 
 /* ── Periodic orbits ── */
