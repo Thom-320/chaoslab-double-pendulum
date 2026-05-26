@@ -565,14 +565,34 @@ function flipColor(value, tMax) {
   if (!Number.isFinite(value)) return "rgba(18, 19, 28, 0.92)";
   const v = Math.max(0, Math.min(1, value / Math.max(tMax, 1e-9)));
   if (v >= 0.995) return "rgba(18, 19, 28, 0.95)";
-  /* Smooth HSL-ish gradient: blue → cyan → green → yellow → orange → red */
-  if (v < 0.18) return `rgba(50, 105, 232, 0.94)`;
-  if (v < 0.36) return `rgba(38, 199, 229, 0.94)`;
-  if (v < 0.56) return `rgba(80, 236, 142, 0.94)`;
-  if (v < 0.74) return `rgba(236, 221, 72, 0.94)`;
-  if (v < 0.90) return `rgba(250, 125, 38, 0.94)`;
-  return `rgba(196, 29, 29, 0.94)`;
+
+  /* Continuous color ramp: deep blue → cyan → green → gold → orange → red */
+  const stops = [
+    [0.00, 20, 42, 120],   /* deep indigo-blue */
+    [0.12, 50, 105, 232],  /* bright blue */
+    [0.28, 38, 199, 229],  /* cyan */
+    [0.44, 60, 220, 130],  /* green */
+    [0.58, 160, 236, 72],  /* lime-gold */
+    [0.72, 236, 200, 52],  /* warm yellow */
+    [0.84, 250, 125, 38],  /* orange */
+    [0.94, 220, 50, 25],   /* deep red */
+    [1.00, 140, 18, 18],   /* dark red */
+  ];
+
+  let i = 0;
+  while (i < stops.length - 1 && stops[i + 1][0] < v) i++;
+  if (i >= stops.length - 1) i = stops.length - 2;
+
+  const [t0, r0, g0, b0] = stops[i];
+  const [t1, r1, g1, b1] = stops[i + 1];
+  const f = Math.max(0, Math.min(1, (v - t0) / (t1 - t0 || 1)));
+
+  const r = Math.round(r0 + (r1 - r0) * f);
+  const g = Math.round(g0 + (g1 - g0) * f);
+  const b = Math.round(b0 + (b1 - b0) * f);
+  return `rgba(${r}, ${g}, ${b}, 0.94)`;
 }
+
 
 function renderMap(ctx, elapsed, w, h) {
   const payload = data.map || {};
