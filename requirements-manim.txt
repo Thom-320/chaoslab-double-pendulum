@@ -1,0 +1,2 @@
+# Optional: only needed if you want to render manim/chaos_geometry_scene.py
+manim>=0.19

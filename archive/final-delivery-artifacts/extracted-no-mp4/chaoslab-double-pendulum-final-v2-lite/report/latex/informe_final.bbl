@@ -1,0 +1,21 @@
+\begin{thebibliography}{6}
+
+\bibitem[{Heyl(2008)}]{heyl2008double}
+J.~S. Heyl, ``The double pendulum fractal,'' arXiv:0805.2464 (2008).
+
+\bibitem[{Rafat \emph{et~al.}(2009)Rafat, Wheatland, and Bedding}]{rafat2009dynamics}
+M.~Z. Rafat, M.~S. Wheatland, and T.~R. Bedding, ``Dynamics of a double pendulum with distributed mass,'' \emph{American Journal of Physics} \textbf{77}, 216--223 (2009).
+
+\bibitem[{SciPy Developers(2026)}]{scipy_solve_ivp}
+SciPy Developers, ``scipy.integrate.solve\_ivp,'' \url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html} (2026).
+
+\bibitem[{Reusser(2018)}]{reusser_double_pendulum}
+R.~Reusser, ``The Double Pendulum Fractal,'' \url{https://observablehq.com/@rreusser/the-double-pendulum-fractal} (2018).
+
+\bibitem[{Open Source Physics(2026)}]{tracker_video}
+Open Source Physics, ``Tracker Video Analysis and Modeling Tool,'' \url{https://physlets.org/tracker/} (2026).
+
+\bibitem[{2swap(2026)}]{twoswap_swaptube}
+2swap, ``swaptube: YouTube video renderer,'' \url{https://github.com/2swap/swaptube} (2026).
+
+\end{thebibliography}

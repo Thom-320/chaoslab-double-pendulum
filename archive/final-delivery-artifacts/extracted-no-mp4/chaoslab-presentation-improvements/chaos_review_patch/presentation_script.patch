@@ -1,0 +1,111 @@
+--- /tmp/script.orig	2026-05-25 13:27:37.070337011 +0000
++++ presentation/script.js	2026-05-25 13:28:44.893327823 +0000
+@@ -348,7 +348,96 @@
+   ctx.fillText("\u03b8\u0308\u2082 = g(\u03b8\u2081, \u03b8\u2082, \u03c9\u2081, \u03c9\u2082)", x, y + 82);
+   ctx.globalAlpha = pulse;
+   ctx.fillStyle = "oklch(72% 0.22 335)";
+-  ctx.fillText("terminos cruzados + senos/cosenos", x, y + 126);
++  ctx.fillText("términos cruzados + senos/cosenos", x, y + 126);
++  ctx.restore();
++}
++
++
++function wrapPi(a) {
++  return Math.atan2(Math.sin(a), Math.cos(a));
++}
++
++function anglesFromSeries(series, i) {
++  const th1 = Math.atan2(series.x1[i], -series.y1[i]);
++  const th2 = Math.atan2(series.x2[i] - series.x1[i], -(series.y2[i] - series.y1[i]));
++  return [wrapPi(th1), wrapPi(th2)];
++}
++
++function drawAngleSpace(ctx, elapsed, w, h) {
++  const dbl = data.double;
++  const idx = Math.floor((elapsed * 42) % dbl.x1.length);
++  const series = { x1: dbl.x1, y1: dbl.y1, x2: dbl.x2, y2: dbl.y2 };
++  drawPendulum(ctx, series, idx, w, h, {
++    ox: w * 0.30,
++    oy: h * 0.31,
++    scale: Math.min(w, h) * 0.17,
++    trail: 95,
++    angles: true,
++    color: "oklch(82% 0.16 205)",
++    bob: "oklch(84% 0.16 85)",
++  });
++
++  const x0 = w * 0.54;
++  const y0 = h * 0.19;
++  const size = Math.min(w * 0.34, h * 0.54);
++  const cx = x0 + size / 2;
++  const cy = y0 + size / 2;
++  ctx.save();
++  ctx.strokeStyle = "oklch(31% 0.035 270)";
++  ctx.lineWidth = 1.2;
++  ctx.strokeRect(x0, y0, size, size);
++
++  ctx.globalAlpha = 0.42;
++  ctx.beginPath();
++  ctx.moveTo(cx, y0);
++  ctx.lineTo(cx, y0 + size);
++  ctx.moveTo(x0, cy);
++  ctx.lineTo(x0 + size, cy);
++  ctx.stroke();
++  ctx.globalAlpha = 1;
++
++  ctx.fillStyle = "oklch(73% 0.025 275)";
++  ctx.font = "15px ui-monospace, monospace";
++  ctx.textAlign = "center";
++  ctx.fillText("θ₁", x0 + size, y0 + size + 36);
++  ctx.save();
++  ctx.translate(x0 - 34, y0 + 22);
++  ctx.rotate(-Math.PI / 2);
++  ctx.fillText("θ₂", 0, 0);
++  ctx.restore();
++
++  const project = (th1, th2) => {
++    const x = x0 + ((th1 + Math.PI) / (2 * Math.PI)) * size;
++    const y = y0 + size - ((th2 + Math.PI) / (2 * Math.PI)) * size;
++    return [x, y];
++  };
++
++  const start = Math.max(0, idx - 260);
++  ctx.strokeStyle = "oklch(82% 0.16 205)";
++  ctx.lineWidth = 2.2;
++  ctx.beginPath();
++  for (let i = start; i <= idx; i += 1) {
++    const [th1, th2] = anglesFromSeries(series, i);
++    const [x, y] = project(th1, th2);
++    if (i === start) ctx.moveTo(x, y);
++    else ctx.lineTo(x, y);
++  }
++  ctx.stroke();
++
++  const [tha, thb] = anglesFromSeries(series, idx);
++  const [px, py] = project(tha, thb);
++  ctx.fillStyle = "oklch(84% 0.16 85)";
++  ctx.beginPath();
++  ctx.arc(px, py, 6, 0, Math.PI * 2);
++  ctx.fill();
++
++  ctx.fillStyle = "oklch(94% 0.01 90)";
++  ctx.font = "20px system-ui";
++  ctx.textAlign = "left";
++  ctx.fillText("trayectoria en espacio de ángulos", x0, y0 - 26);
++  ctx.font = "15px system-ui";
++  ctx.fillStyle = "oklch(73% 0.025 275)";
++  ctx.fillText("un punto = un estado angular del sistema", x0, y0 + size + 64);
+   ctx.restore();
+ }
+ 
+@@ -411,6 +500,10 @@
+     drawEomOverlay(ctx, elapsed, w, h);
+   }
+ 
++  if (name === "angle-space") {
++    drawAngleSpace(ctx, elapsed, w, h);
++  }
++
+   if (name === "energy") {
+     drawChart(
+       ctx,

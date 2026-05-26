@@ -19,6 +19,7 @@ La estética está inspirada en videos tipo 2swap / 3Blue1Brown: fondo oscuro, c
 - Figuras y GIF listos para presentación.
 - Presentación HTML animada para exposición en vivo.
 - Guion y video corto estilo divulgación matemática.
+- Escena Manim opcional y renderizador Matplotlib para reforzar la explicación geométrica, sin hacer que Manim sea una dependencia obligatoria.
 
 ## Instalación
 
@@ -42,6 +43,23 @@ pdflatex --version
 ```
 
 Si FFmpeg no existe, instala FFmpeg antes de renderizar MP4. Si `latexmk` o `pdflatex` no existen, instala una distribucion LaTeX antes de regenerar `report/informe_final.pdf`. Manim queda como ruta opcional; la entrega principal no depende de Manim.
+
+## Apoyo visual opcional estilo Manim
+
+La presentación principal no depende de Manim. Si quieres generar un clip geométrico adicional con estética tipo 3Blue1Brown, usa el renderizador basado en Matplotlib:
+
+```bash
+python scripts/render_manim_style_geometry.py
+```
+
+Esto genera `animations/manim_style_geometry.mp4`. El MP4 no es necesario para ejecutar la app ni la presentación HTML.
+
+Si Manim ya está instalado, también puedes renderizar la escena programática:
+
+```bash
+pip install -r requirements-manim.txt
+manim -pqh manim/chaos_geometry_scene.py ChaosGeometryScene
+```
 
 ## Generar figuras y GIF
 

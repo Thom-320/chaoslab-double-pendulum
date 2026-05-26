@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ChaosLab - Presentación animada</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main id="deck" aria-live="polite">
+      <section class="slide is-active" data-scene="hook">
+        <canvas class="scene-canvas" data-canvas="hook"></canvas>
+        <div class="claim">
+          <p class="kicker">0:00 - Hook</p>
+          <h1>Mismas leyes, futuros distintos</h1>
+          <p>Dos simulaciones obedecen la misma EDO. Solo cambia <code>θ₂(0)</code> en <code>10⁻⁶ rad</code>.</p>
+          <div class="metric-row" aria-label="Métrica inicial de perturbación">
+            <span class="pill">perturbación microscópica</span>
+            <span class="pill accent">efecto macroscópico</span>
+          </div>
+        </div>
+        <aside class="notes">Abrir con contraste visual: al principio las trayectorias parecen una sola, luego se separan. La pregunta no es si las leyes fallan, sino por qué una diferencia tan pequeña puede amplificarse.</aside>
+      </section>
+
+      <section class="slide" data-scene="simple">
+        <canvas class="scene-canvas" data-canvas="simple"></canvas>
+        <div class="claim right">
+          <p class="kicker">0:25 - Física I base</p>
+          <h2>Primero, el caso ordenado</h2>
+          <p>El ángulo se mide desde la vertical hacia abajo. Esa convención también se usa en el péndulo doble.</p>
+          <p class="equation">ω = dθ / dt</p>
+          <p class="equation">sin(θ) ≈ θ para |θ| ≪ 1</p>
+        </div>
+        <aside class="notes">Esta escena ancla el proyecto en Física I: oscilaciones, gravedad, energía y rotación. El péndulo simple es el punto de partida familiar antes de mostrar el acoplamiento.</aside>
+      </section>
+
+      <section class="slide" data-scene="state">
+        <canvas class="scene-canvas" data-canvas="state"></canvas>
+        <div class="claim">
+          <p class="kicker">0:55 - Segunda masa</p>
+          <h2>Agregar una barra cambia el juego</h2>
+          <p>El estado pasa de una coordenada a cuatro variables acopladas.</p>
+          <p class="state-vector">s(t) = [θ<sub>1</sub>, ω<sub>1</sub>, θ<sub>2</sub>, ω<sub>2</sub>]</p>
+        </div>
+        <aside class="notes">No cambiamos de leyes. Seguimos con mecánica clásica: gravedad, energía y rotación. Lo nuevo es que el movimiento de una barra afecta el de la otra.</aside>
+      </section>
+
+      <section class="slide" data-scene="geometry">
+        <canvas class="scene-canvas" data-canvas="geometry"></canvas>
+        <div class="claim compact">
+          <p class="kicker">1:20 - Modelo geométrico</p>
+          <h2>De ángulos a posiciones</h2>
+          <p>Las coordenadas salen por trigonometría, no por dibujo libre.</p>
+          <div class="formula-stack" aria-label="Coordenadas del péndulo doble">
+            <p><span>x<sub>1</sub></span> = L<sub>1</sub> sin(θ<sub>1</sub>)</p>
+            <p><span>y<sub>1</sub></span> = -L<sub>1</sub> cos(θ<sub>1</sub>)</p>
+            <p><span>x<sub>2</sub></span> = x<sub>1</sub> + L<sub>2</sub> sin(θ<sub>2</sub>)</p>
+            <p><span>y<sub>2</sub></span> = y<sub>1</sub> - L<sub>2</sub> cos(θ<sub>2</sub>)</p>
+          </div>
+        </div>
+        <aside class="notes">Esta es la escena 3Blue1Brown: construir la posición paso a paso. Primero la masa 1 respecto al pivote; luego la masa 2 como desplazamiento relativo desde la masa 1.</aside>
+      </section>
+
+      <section class="slide" data-scene="simulation">
+        <canvas class="scene-canvas" data-canvas="simulation"></canvas>
+        <div class="claim compact">
+          <p class="kicker">1:55 - Simulación numérica</p>
+          <h2>Resolver, no dibujar a mano</h2>
+          <p><code>solve_ivp</code> integra el sistema como problema de valor inicial.</p>
+          <p class="equation">d s / dt = f(t, s)</p>
+        </div>
+        <aside class="notes">Cada frame sale del modelo físico. La animación no es una coreografía: es la visualización de una solución numérica reproducible.</aside>
+      </section>
+
+      <section class="slide" data-scene="angle-space">
+        <canvas class="scene-canvas" data-canvas="angle-space"></canvas>
+        <div class="claim right compact">
+          <p class="kicker">2:20 - Espacio de ángulos</p>
+          <h2>Una huella del movimiento</h2>
+          <p>Tomamos la misma trayectoria y la miramos como señal: <code>θ₁(t)</code> contra <code>θ₂(t)</code>.</p>
+          <p class="equation long">un péndulo → una curva en espacio angular</p>
+        </div>
+        <aside class="notes">Este es el puente visual tomado de la estrategia de 2swap: antes de mostrar miles de condiciones iniciales, mostramos la huella de un solo péndulo en el plano theta1-theta2.</aside>
+      </section>
+
+      <section class="slide" data-scene="energy">
+        <canvas class="scene-canvas" data-canvas="energy"></canvas>
+        <div class="claim compact">
+          <p class="kicker">2:45 - Control de calidad</p>
+          <h2>La energía total casi no se mueve</h2>
+          <p>Si el integrador inventara energía, no podríamos confiar en la sensibilidad observada.</p>
+          <p class="equation">E(t) = T(t) + V(t) ≈ constante</p>
+          <div class="metric-row" aria-label="Deriva de energía">
+            <span class="pill">deriva relativa máx. ≈ 2.6×10⁻⁶</span>
+          </div>
+        </div>
+        <aside class="notes">La energía total es el ancla de confianza. La divergencia no se debe a que el modelo viole groseramente la conservación de energía.</aside>
+      </section>
+
+      <section class="slide" data-scene="divergence">
+        <canvas class="scene-canvas" data-canvas="divergence"></canvas>
+        <div class="claim right compact">
+          <p class="kicker">3:20 - Sensibilidad</p>
+          <h2>Δ(t) crece</h2>
+          <p>Medimos la separación entre dos estados casi idénticos en escala logarítmica.</p>
+          <p class="equation long">Δ(t) = ||s(t) - s'(t)||</p>
+          <p class="caveat">No es un exponente de Lyapunov formal: es evidencia numérica de sensibilidad.</p>
+        </div>
+        <aside class="notes">Decir explícitamente que no estamos vendiendo una prueba formal de caos. Mostramos una medición de divergencia temprana compatible con sensibilidad a condiciones iniciales.</aside>
+      </section>
+
+      <section class="slide" data-scene="map">
+        <div class="map-stage">
+          <img class="map-reference" src="../figures/flip_time_fractal_map.png" alt="Mapa de condiciones iniciales del péndulo doble" />
+          <canvas class="scene-canvas map-canvas" data-canvas="map"></canvas>
+          <div class="map-scan"></div>
+        </div>
+        <div class="claim compact">
+          <p class="kicker">4:00 - Mapa global</p>
+          <h2>Un mapa de futuros</h2>
+          <p>Cada pixel nace de resolver la misma EDO con una condición inicial distinta.</p>
+          <p class="caveat">Color = tiempo hasta el primer flip.</p>
+        </div>
+        <aside class="notes">Este es el momento inspirado en 2swap/Observable. No presentar el mapa como imagen pegada: cada punto es un experimento computacional. La frontera irregular es el mensaje.</aside>
+      </section>
+
+      <section class="slide" data-scene="close">
+        <canvas class="scene-canvas" data-canvas="close"></canvas>
+        <div class="claim center">
+          <p class="kicker">4:40 - Cierre</p>
+          <h2>Determinismo no significa predictibilidad práctica</h2>
+          <p>La física da las reglas. La computación revela sus consecuencias.</p>
+          <p class="sources">Física I + Cálculo I + EDOs + visualización científica</p>
+          <p class="caveat">Alcance honesto: sin rozamiento y sin Lyapunov formal; sí hay simulación reproducible, energía controlada, divergencia y mapa de condiciones iniciales.</p>
+        </div>
+        <aside class="notes">Cerrar con la idea central y las limitaciones. Eso protege la defensa oral: no prometemos una prueba matemática completa; defendemos evidencia numérica clara.</aside>
+      </section>
+    </main>
+
+    <nav class="chrome" aria-label="Controles de presentación">
+      <button id="prev" type="button" aria-label="Anterior">Anterior</button>
+      <div class="progress"><span id="progress-bar"></span></div>
+      <output id="counter">1 / 10</output>
+      <button id="notes-toggle" type="button">Notas</button>
+      <button id="next" type="button" aria-label="Siguiente">Siguiente</button>
+    </nav>
+
+    <div id="notes-panel" class="notes-panel" hidden></div>
+
+    <script src="data/chaos_data.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

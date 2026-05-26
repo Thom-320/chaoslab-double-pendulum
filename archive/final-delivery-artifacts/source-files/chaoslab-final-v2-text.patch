@@ -1,0 +1,961 @@
+diff -ruN '--exclude=*.pdf' '--exclude=*.mp4' '--exclude=*.gif' '--exclude=*.png' '--exclude=*.npz' '--exclude=*.aux' '--exclude=*.log' '--exclude=*.out' '--exclude=*.fls' '--exclude=*.fdb_latexmk' chaos_review/repo/README.md chaos_final_v2/README.md
+--- chaos_review/repo/README.md	2026-05-25 12:56:02.000000000 +0000
++++ chaos_final_v2/README.md	2026-05-26 03:35:55.669368303 +0000
+@@ -19,6 +19,7 @@
+ - Figuras y GIF listos para presentación.
+ - Presentación HTML animada para exposición en vivo.
+ - Guion y video corto estilo divulgación matemática.
++- Clip opcional `animations/manim_style_geometry.mp4` y escena Manim `manim/chaos_geometry_scene.py` para reforzar la explicación geométrica.
+ 
+ ## Instalación
+ 
+@@ -57,6 +58,30 @@
+ data/
+ ```
+ 
++
++## Clip opcional estilo Manim
++
++La entrega principal **no depende de Manim**. Para tener un guiño visual tipo 3Blue1Brown sin convertir la entrega en una guerra de dependencias, el repositorio incluye dos rutas:
++
++```bash
++python scripts/render_manim_style_geometry.py
++```
++
++Esto genera:
++
++```text
++animations/manim_style_geometry.mp4
++```
++
++Si Manim ya está instalado localmente, también se puede renderizar la escena opcional:
++
++```bash
++pip install -r requirements-manim.txt
++manim -pqh manim/chaos_geometry_scene.py ChaosGeometryScene
++```
++
++Ese clip es decorativo y pedagógico; la defensa académica sigue siendo la simulación reproducible, energía, divergencia y mapa de condiciones iniciales.
++
+ ## Correr la app
+ 
+ ```bash
+diff -ruN '--exclude=*.pdf' '--exclude=*.mp4' '--exclude=*.gif' '--exclude=*.png' '--exclude=*.npz' '--exclude=*.aux' '--exclude=*.log' '--exclude=*.out' '--exclude=*.fls' '--exclude=*.fdb_latexmk' chaos_review/repo/docs/checklist_aceptacion_final.md chaos_final_v2/docs/checklist_aceptacion_final.md
+--- chaos_review/repo/docs/checklist_aceptacion_final.md	1970-01-01 00:00:00.000000000 +0000
++++ chaos_final_v2/docs/checklist_aceptacion_final.md	2026-05-26 03:36:12.802052200 +0000
+@@ -0,0 +1,79 @@
++# Checklist de aceptación final — ChaosLab
++
++## Comandos mínimos
++
++```bash
++python -m venv .venv
++source .venv/bin/activate  # Windows: .venv\Scripts\activate
++pip install -r requirements.txt
++python scripts/smoke_test.py
++python scripts/export_presentation_data.py
++```
++
++## Comandos opcionales
++
++```bash
++python scripts/generate_assets.py
++python scripts/render_manim_style_geometry.py
++python scripts/build_documents.py
++streamlit run app.py
++```
++
++Si Manim ya está instalado:
++
++```bash
++pip install -r requirements-manim.txt
++manim -pqh manim/chaos_geometry_scene.py ChaosGeometryScene
++```
++
++## Qué mirar en la presentación
++
++- Slide 1: el hook compara dos condiciones casi iguales.
++- Slide 2: el péndulo simple ancla el proyecto en Física I.
++- Slide 4: las coordenadas cartesianas son correctas.
++- Slide 5: `solve_ivp` aparece como integración de `ds/dt=f(t,s)`.
++- Slide 6: `angle-space` muestra `θ₁(t)` contra `θ₂(t)` como puente visual.
++- Slide 7: energía total casi constante.
++- Slide 8: divergencia con caveat de no Lyapunov formal.
++- Slide 9: el mapa se revela como muchos experimentos numéricos.
++- Slide 10: cierre honesto: determinismo no implica predictibilidad práctica.
++
++## Métricas esperadas
++
++`python scripts/smoke_test.py` debe imprimir algo del estilo:
++
++```text
++ChaosLab smoke test passed
++energy_relative_drift < 1e-4
++log_delta_slope = número finito
++ffmpeg_available=True/False
++```
++
++La deriva energética de la corrida usada en presentación suele estar alrededor de `10^-6`, y la pendiente temprana de `log(Delta)` debe ser positiva y finita.
++
++## Artefactos finales
++
++```text
++README.md
++src/chaoslab/
++presentation/index.html
++presentation/script.js
++presentation/style.css
++presentation/data/chaos_data.js
++slides/guion_5_min.md
++slides/presentacion_final.pdf
++report/informe_final.pdf
++report/latex/informe_final.tex
++figures/
++animations/double_pendulum.gif
++animations/chaoslab_teaser.mp4
++animations/manim_style_geometry.mp4
++manim/chaos_geometry_scene.py
++```
++
++## Reglas de defensa oral
++
++- No decir “probamos formalmente caos”. Decir “mostramos evidencia numérica de sensibilidad a condiciones iniciales”.
++- No improvisar parámetros en vivo si no se probaron antes.
++- No depender del WiFi.
++- Tener el HTML abierto, el PDF listo y el MP4 como respaldo.
+diff -ruN '--exclude=*.pdf' '--exclude=*.mp4' '--exclude=*.gif' '--exclude=*.png' '--exclude=*.npz' '--exclude=*.aux' '--exclude=*.log' '--exclude=*.out' '--exclude=*.fls' '--exclude=*.fdb_latexmk' chaos_review/repo/docs/codex_antigravity_prompt.md chaos_final_v2/docs/codex_antigravity_prompt.md
+--- chaos_review/repo/docs/codex_antigravity_prompt.md	1970-01-01 00:00:00.000000000 +0000
++++ chaos_final_v2/docs/codex_antigravity_prompt.md	2026-05-26 03:36:12.794369175 +0000
+@@ -0,0 +1,22 @@
++Actúa como ingeniero de software científico, diseñador de visualizaciones y revisor académico. Trabaja sobre el repositorio `chaoslab-double-pendulum` sin romper lo existente.
++
++Objetivo: pulir la entrega final de ChaosLab para un proyecto final de Física I. El formato recomendado es híbrido: `presentation/index.html` para la exposición principal de 5 minutos, `app.py` para demo/Q&A, `report/informe_final.pdf` como informe, y MP4 solo como respaldo.
++
++Prioridades:
++
++1. Verificar que el modelo físico sea consistente: coordenadas `x1=L1 sin(theta1)`, `y1=-L1 cos(theta1)`, `x2=x1+L2 sin(theta2)`, `y2=y1-L2 cos(theta2)`; estado `[theta1, omega1, theta2, omega2]`; energía `E=T+V`; integración con `solve_ivp`; divergencia como evidencia numérica, no prueba formal de caos.
++2. Mantener la presentación HTML con fondo oscuro, pocas palabras y una idea por escena.
++3. Preservar la escena nueva `angle-space`: debe aparecer antes de energía/mapa y explicar `theta1(t)` contra `theta2(t)` como puente visual entre un péndulo individual y el mapa global.
++4. Asegurar que el mapa de condiciones iniciales se explique como un conjunto de experimentos numéricos: cada pixel corresponde a una condición inicial y el color indica tiempo hasta el primer flip.
++5. No convertir Manim en dependencia obligatoria. `manim/chaos_geometry_scene.py` y `animations/manim_style_geometry.mp4` son apoyo visual opcional.
++6. Revisar ortografía, acentos, notación y consistencia entre guion, presentación, informe y README.
++7. Ejecutar `python scripts/smoke_test.py` y reportar resultados.
++
++No uses material con copyright de videos de referencia. Toma inspiración estructural de 2swap/3Blue1Brown/Veritasium, pero todo el contenido visual debe ser generado por el repositorio.
++
++Entregables esperados:
++
++- Diff breve y seguro.
++- Lista de archivos modificados.
++- Comandos de verificación.
++- Riesgos restantes.
+diff -ruN '--exclude=*.pdf' '--exclude=*.mp4' '--exclude=*.gif' '--exclude=*.png' '--exclude=*.npz' '--exclude=*.aux' '--exclude=*.log' '--exclude=*.out' '--exclude=*.fls' '--exclude=*.fdb_latexmk' chaos_review/repo/docs/guion_video.md chaos_final_v2/docs/guion_video.md
+--- chaos_review/repo/docs/guion_video.md	2026-05-25 12:56:02.000000000 +0000
++++ chaos_final_v2/docs/guion_video.md	2026-05-26 03:33:50.367761809 +0000
+@@ -1,32 +1,75 @@
+-# Guion estilo 2swap / 3Blue1Brown para video corto
++# Guion final de 5 minutos — ChaosLab
+ 
+-## Tono visual
+-Fondo oscuro, líneas finas, color neón, transición suave entre fórmula, simulación y mapa. Nada de diapositivas llenas de texto. La idea es que el espectador vea primero el fenómeno y después entienda la ecuación. Sí, una decisión pedagógica sensata; no avisemos demasiado para no asustar.
++## 0:00–0:25 — Hook: mismas leyes, futuros distintos
+ 
+-## Estructura de 90 segundos
++Miren estas dos simulaciones. Tienen las mismas masas, las mismas longitudes y obedecen exactamente la misma ecuación diferencial. La única diferencia es que en una de ellas cambié el ángulo inicial de la segunda barra en `10⁻⁶ rad`, una perturbación demasiado pequeña para verla en la pantalla.
+ 
+-### 0:00–0:10 — Gancho
+-Pantalla negra. Aparecen dos péndulos casi idénticos.
+-Texto: “Dos sistemas. Misma física. Diferencia inicial: 0.000001 rad.”
+-Ambos empiezan sincronizados.
+-
+-### 0:10–0:25 — Ruptura
+-Las trayectorias se separan. Aparece la curva Delta(t) creciendo.
+-Narración: “El problema no es que no conozcamos las leyes. El problema es que las leyes amplifican errores microscópicos.”
+-
+-### 0:25–0:45 — Física
+-Aparecen variables theta1, theta2, omega1, omega2.
+-Se muestra E = T + V casi constante.
+-Narración: “La energía se conserva, así que el caos no viene de un error numérico. Viene de la no linealidad.”
+-
+-### 0:45–1:05 — Mapa fractal
+-Aparece el mapa de condiciones iniciales. Cada pixel es un experimento.
+-Texto: “Color = tiempo hasta el primer flip.”
+-Narración: “Cambiar apenas el ángulo inicial puede cambiar completamente el futuro del sistema.”
+-
+-### 1:05–1:20 — Conclusión
+-Volver al péndulo simple y luego al doble.
+-Narración: “El péndulo simple enseña periodicidad. El péndulo doble enseña humildad.”
++Durante unos segundos parecen el mismo sistema. Luego dejan de estar de acuerdo. El proyecto nace de esa tensión: **si la mecánica clásica es determinista, ¿por qué el futuro puede volverse prácticamente impredecible?**
+ 
+-### 1:20–1:30 — Cierre
+-Título del proyecto, autores, curso, GitHub.
++## 0:25–0:55 — Física I base: el péndulo simple
++
++Partimos del caso ordenado de Física I: el péndulo simple. Su posición se describe con un ángulo `θ` medido desde la vertical. La velocidad angular es `ω = dθ/dt`; para oscilaciones pequeñas usamos `sin(θ) ≈ θ`, y aparece un movimiento casi periódico.
++
++Ese caso nos da el vocabulario: posición angular, velocidad angular, energía potencial gravitacional y energía cinética.
++
++## 0:55–1:20 — Segunda masa: cuatro variables acopladas
++
++Al agregar una segunda barra, el estado ya no es solo un ángulo. Ahora es
++
++`s(t) = [θ₁, ω₁, θ₂, ω₂]`.
++
++No cambiamos de leyes. Seguimos usando gravedad, energía y rotación. Lo que cambia es que el movimiento de una barra afecta el movimiento de la otra. Ese acoplamiento es el origen de la complejidad.
++
++## 1:20–1:55 — Modelo geométrico: de ángulos a coordenadas
++
++Para simular no basta con dibujar dos líneas bonitas, aunque sería cómodo y profundamente irresponsable. Primero convertimos ángulos en posiciones:
++
++`x₁ = L₁ sin(θ₁)`, `y₁ = -L₁ cos(θ₁)`.
++
++Luego la segunda masa se calcula desde la primera:
++
++`x₂ = x₁ + L₂ sin(θ₂)`, `y₂ = y₁ - L₂ cos(θ₂)`.
++
++Esto conecta la animación con el modelo físico. Cada punto que aparece en pantalla sale de estas coordenadas.
++
++## 1:55–2:20 — Simulación numérica: resolver, no coreografiar
++
++Las ecuaciones del péndulo doble son acopladas y no tienen una solución analítica simple para condiciones generales. Por eso las resolvemos numéricamente como un problema de valor inicial:
++
++`ds/dt = f(t, s)`.
++
++En el repositorio usamos `solve_ivp`. La simulación recibe una condición inicial, calcula aceleraciones y velocidades, y avanza en el tiempo. La animación no está inventada cuadro por cuadro; es una visualización de la solución numérica.
++
++## 2:20–2:45 — Espacio de ángulos: una huella del movimiento
++
++Antes de mostrar el mapa global, miramos un solo péndulo de otra manera. En vez de seguir únicamente la masa, graficamos `θ₁(t)` contra `θ₂(t)`.
++
++Esa curva es la huella angular de un experimento individual. Este paso prepara el mapa: si una trayectoria deja una curva, miles de condiciones iniciales pueden formar una geografía completa de comportamientos.
++
++## 2:45–3:15 — Energía: control de calidad numérica
++
++Antes de hablar de caos, hay que verificar que el integrador no esté haciendo magia negra, que es una tradición humana lamentablemente común. Calculamos energía cinética, potencial y total.
++
++La cinética y la potencial se intercambian, pero la energía total permanece casi constante. En esta corrida, la deriva relativa máxima está alrededor de `2.6×10⁻⁶`. Eso no prueba caos, pero sí nos dice que la simulación es confiable para analizar el comportamiento observado.
++
++## 3:15–3:55 — Sensibilidad: una diferencia microscópica crece
++
++Ahora corremos dos simulaciones casi idénticas y medimos
++
++`Δ(t) = ||s(t) - s'(t)||`.
++
++En escala logarítmica, `Δ(t)` crece rápidamente durante la ventana inicial. Esta pendiente es un indicador útil de sensibilidad, pero hay que decirlo bien: **no estamos calculando un exponente de Lyapunov formal**. Estamos mostrando evidencia numérica de sensibilidad a condiciones iniciales.
++
++La frase central es: la pérdida de predictibilidad no aparece porque falten leyes; aparece porque las leyes amplifican diferencias pequeñas.
++
++## 3:55–4:40 — Mapa global: cada pixel es un experimento
++
++Ahora pasamos de una simulación a miles. Cada pixel del mapa representa una condición inicial: en el eje horizontal está `θ₁(0)` y en el eje vertical está `θ₂(0)`. Para cada punto resolvemos la misma EDO y medimos cuánto tarda en ocurrir el primer flip.
++
++El color codifica ese tiempo. Las zonas oscuras no hacen flip dentro de la ventana simulada. Las regiones de color hacen flip en distintos tiempos. Lo importante no es solo que el mapa sea bonito, porque el universo no necesita otro salvapantallas; lo importante es la frontera irregular: puntos iniciales muy cercanos pueden producir futuros muy distintos.
++
++## 4:40–5:00 — Cierre: determinismo no es predictibilidad práctica
++
++ChaosLab muestra que un sistema de mecánica clásica puede ser determinista y aun así difícil de predecir en la práctica. Las reglas son fijas; lo complicado es que pequeñas incertidumbres iniciales pueden crecer hasta cambiar el resultado observable.
++
++El alcance es honesto: sin rozamiento, sin medición experimental directa y sin exponente de Lyapunov formal. Pero el núcleo está completo: modelo físico, integración reproducible, conservación de energía como control, divergencia entre trayectorias y mapa de condiciones iniciales.
+diff -ruN '--exclude=*.pdf' '--exclude=*.mp4' '--exclude=*.gif' '--exclude=*.png' '--exclude=*.npz' '--exclude=*.aux' '--exclude=*.log' '--exclude=*.out' '--exclude=*.fls' '--exclude=*.fdb_latexmk' chaos_review/repo/docs/presentation_final_director_notes.md chaos_final_v2/docs/presentation_final_director_notes.md
+--- chaos_review/repo/docs/presentation_final_director_notes.md	2026-05-25 13:37:46.000000000 +0000
++++ chaos_final_v2/docs/presentation_final_director_notes.md	2026-05-26 03:34:03.331592126 +0000
+@@ -2,32 +2,33 @@
+ 
+ ## Veredicto de formato
+ 
+-Formato principal recomendado: **presentación HTML animada en vivo**, con `animations/chaoslab_pitch_5min.mp4` como respaldo y `streamlit run app.py` como demo opcional para preguntas. No conviene migrar todo a Manim ni a un pipeline tipo Swaptube en esta etapa: el proyecto ya tiene datos, canvas, assets, reporte y video; reescribirlo ahora cambiaría riesgo por vanidad, ese combustible renovable de los proyectos que fallan.
++Formato principal recomendado: **presentación HTML animada en vivo**, con `animations/chaoslab_teaser.mp4` o `animations/chaoslab_pitch_5min.mp4` como respaldo si se conserva el archivo grande, y `streamlit run app.py` como demo opcional para preguntas. No conviene migrar todo a Manim ni a un pipeline tipo Swaptube: el proyecto ya tiene datos, canvas, assets, reporte y video. Reescribirlo ahora cambiaría riesgo por vanidad, ese combustible renovable de los proyectos que fallan.
+ 
+ ## Diagnóstico breve
+ 
+ Fortalezas actuales: el modelo físico está bien anclado en Física I, las coordenadas son explícitas, la integración numérica es reproducible, la conservación de energía funciona como control de calidad y el mapa de condiciones iniciales ya existe.
+ 
+-Debilidades actuales: el mapa aparecía demasiado como imagen final y no como resultado de miles de experimentos computacionales; el guion necesitaba más cuidado con el sobre-reclamo de “caos”; había falta de tildes y pulido en el español; y la escena de divergencia necesitaba una advertencia clara de que la pendiente no es un exponente de Lyapunov formal.
++Debilidades corregidas: el mapa aparecía demasiado como imagen final y no como resultado de muchos experimentos computacionales; faltaba una escena puente entre trayectoria individual y mapa global; el guion necesitaba más cuidado con el sobre-reclamo de “caos”; y la escena de divergencia necesitaba una advertencia clara de que la pendiente no es un exponente de Lyapunov formal.
+ 
+ ## Chunks de referencia 2swap adaptados
+ 
+ 1. **Hook:** contraste entre trayectorias casi idénticas y futuros distintos. En ChaosLab se usa la perturbación `10⁻⁶ rad`.
+ 2. **Construcción del modelo:** pasar de péndulo simple a estado `[θ₁,ω₁,θ₂,ω₂]` y coordenadas cartesianas.
+-3. **Visualizaciones locales:** trayectoria, energía y divergencia. Aquí se sacrifica el audio de 2swap para mantener una defensa de Física I más fuerte.
+-4. **Mapa global:** cada pixel es una simulación. Este era el punto débil y quedó reforzado con un mapa progresivo en canvas.
++3. **Visualización local:** una trayectoria en espacio angular `θ₁(t)` contra `θ₂(t)`. Este puente es esencial antes del mapa.
++4. **Mapa global:** cada pixel es una simulación. El mapa se revela progresivamente para que parezca un experimento repetido, no una imagen pegada.
+ 5. **Cierre:** determinismo no implica predictibilidad práctica, sin venderlo como prueba formal completa de caos.
+ 
+-## Cambios realizados
++## Cambios realizados en esta iteración
+ 
+-- `presentation/index.html`: copy pulido, tildes, métricas, caveat de Lyapunov y nuevo mapa narrativo.
+-- `presentation/script.js`: render progresivo del mapa usando una malla reducida real exportada desde `data/flip_time_map_120.npz`.
+-- `presentation/style.css`: estilos para métricas, caveats y mapa computacional.
+-- `scripts/export_presentation_data.py`: ahora exporta un payload reducido del mapa para el HTML.
+-- `scripts/smoke_test.py`: ahora verifica que la presentación tenga datos, mapa y advertencia de no sobre-reclamo.
+-- `slides/guion_5_min.md`: guion final cronometrado.
+-- `src/chaoslab/physics.py`: se quitaron frases coloquiales en docstrings para dejar el código más profesional.
++- `presentation/index.html`: se añadió la escena `angle-space` entre simulación y energía; se actualizaron tiempos de exposición.
++- `presentation/script.js`: se añadió `drawAngleSpace`, que deriva `θ₁` y `θ₂` desde las posiciones ya exportadas y dibuja la huella angular de un experimento individual.
++- `presentation/style.css`: ajustes menores para la nueva escena.
++- `slides/guion_5_min.md` y `docs/guion_video.md`: guion final cronometrado con la escena puente.
++- `manim/chaos_geometry_scene.py`: escena opcional de Manim para mostrar el modelado geométrico con estética 3Blue1Brown.
++- `requirements-manim.txt`: dependencias opcionales para renderizar Manim, separadas de la entrega principal.
++- `docs/codex_antigravity_prompt.md`: prompt actualizado para revisión final externa.
++- `docs/checklist_aceptacion_final.md`: comandos y criterios de aceptación.
+ 
+ ## Riesgo restante
+ 
+-El video MP4 ya existe, pero no conviene regenerarlo justo antes de entregar salvo que sea estrictamente necesario. La versión HTML es más flexible para exposición oral y el MP4 debe quedar como respaldo si el navegador o el proyector deciden participar en la tragedia.
++El video MP4 de 5 minutos no debe ser la pieza principal si no está sincronizado con la escena `angle-space`. La presentación HTML es más flexible para exposición oral. El MP4 debe quedar como respaldo, no como dependencia única.
+diff -ruN '--exclude=*.pdf' '--exclude=*.mp4' '--exclude=*.gif' '--exclude=*.png' '--exclude=*.npz' '--exclude=*.aux' '--exclude=*.log' '--exclude=*.out' '--exclude=*.fls' '--exclude=*.fdb_latexmk' chaos_review/repo/manim/chaos_geometry_scene.py chaos_final_v2/manim/chaos_geometry_scene.py
+--- chaos_review/repo/manim/chaos_geometry_scene.py	1970-01-01 00:00:00.000000000 +0000
++++ chaos_final_v2/manim/chaos_geometry_scene.py	2026-05-26 03:34:32.627404677 +0000
+@@ -0,0 +1,89 @@
++"""Optional Manim scene for the ChaosLab presentation.
++
++This file is intentionally not part of the required runtime. The main project
++runs with NumPy/SciPy/Matplotlib/Streamlit. Use this scene only if Manim is
++already available locally and you want a short 3Blue1Brown-style clip for the
++geometric model.
++
++Run from the repository root:
++
++    pip install -r requirements-manim.txt
++    manim -pqh manim/chaos_geometry_scene.py ChaosGeometryScene
++
++The output can be inserted as a backup clip, not as a dependency for the live
++presentation.
++"""
++
++from __future__ import annotations
++
++from manim import *
++import numpy as np
++
++
++class ChaosGeometryScene(Scene):
++    def construct(self):
++        self.camera.background_color = "#05050a"
++        cyan = "#42e8f5"
++        gold = "#ffcf33"
++        magenta = "#ff2bd6"
++        green = "#82ff7a"
++        fg = "#f2f2f2"
++        muted = "#8f90a3"
++
++        title = Text("De ángulos a coordenadas", font_size=44, weight=BOLD, color=fg)
++        title.to_edge(UP)
++        subtitle = Text("la animación sale del modelo físico", font_size=24, color=muted)
++        subtitle.next_to(title, DOWN, buff=0.18)
++        self.play(Write(title), FadeIn(subtitle, shift=0.2 * DOWN), run_time=1.2)
++
++        pivot = np.array([-2.4, 1.15, 0.0])
++        L1 = 1.6
++        L2 = 1.35
++        theta1 = 0.78
++        theta2 = -0.56
++        p1 = pivot + np.array([L1 * np.sin(theta1), -L1 * np.cos(theta1), 0])
++        p2 = p1 + np.array([L2 * np.sin(theta2), -L2 * np.cos(theta2), 0])
++
++        vertical_1 = DashedLine(pivot, pivot + np.array([0, -1.9, 0]), color=muted, stroke_opacity=0.55)
++        vertical_2 = DashedLine(p1, p1 + np.array([0, -1.45, 0]), color=muted, stroke_opacity=0.45)
++        rod1 = Line(pivot, p1, color=fg, stroke_width=6)
++        rod2 = Line(p1, p2, color=fg, stroke_width=6)
++        bob1 = Dot(p1, radius=0.09, color=magenta)
++        bob2 = Dot(p2, radius=0.11, color=gold)
++        arc1 = Arc(radius=0.42, start_angle=-PI / 2, angle=theta1, color=cyan).shift(pivot)
++        arc2 = Arc(radius=0.34, start_angle=-PI / 2, angle=theta2, color=gold).shift(p1)
++        label1 = MathTex(r"\theta_1", color=cyan, font_size=34).move_to(pivot + np.array([0.42, -0.55, 0]))
++        label2 = MathTex(r"\theta_2", color=gold, font_size=34).move_to(p1 + np.array([-0.35, -0.44, 0]))
++
++        self.play(Create(vertical_1), Create(vertical_2), Create(rod1), Create(rod2), FadeIn(bob1), FadeIn(bob2), run_time=1.6)
++        self.play(Create(arc1), Create(arc2), FadeIn(label1), FadeIn(label2), run_time=1.0)
++
++        eqs = VGroup(
++            MathTex(r"x_1=L_1\sin\theta_1", color=cyan, font_size=34),
++            MathTex(r"y_1=-L_1\cos\theta_1", color=magenta, font_size=34),
++            MathTex(r"x_2=x_1+L_2\sin\theta_2", color=gold, font_size=34),
++            MathTex(r"y_2=y_1-L_2\cos\theta_2", color=green, font_size=34),
++        ).arrange(DOWN, aligned_edge=LEFT, buff=0.22)
++        eqs.to_corner(RIGHT + DOWN).shift(0.25 * UP)
++
++        guides = VGroup(
++            DashedLine([pivot[0], p1[1], 0], p1, color=cyan),
++            DashedLine(pivot, [pivot[0], p1[1], 0], color=magenta),
++            DashedLine([p1[0], p2[1], 0], p2, color=gold),
++            DashedLine(p1, [p1[0], p2[1], 0], color=green),
++        )
++        self.play(Create(guides[0]), Write(eqs[0]), run_time=0.9)
++        self.play(Create(guides[1]), Write(eqs[1]), run_time=0.9)
++        self.play(Create(guides[2]), Write(eqs[2]), run_time=0.9)
++        self.play(Create(guides[3]), Write(eqs[3]), run_time=0.9)
++
++        state = MathTex(r"s(t)=[\theta_1,\omega_1,\theta_2,\omega_2]", color=fg, font_size=38)
++        state.next_to(subtitle, DOWN, buff=0.45)
++        box = SurroundingRectangle(state, color=cyan, buff=0.16)
++        self.play(FadeIn(state, shift=0.2 * UP), Create(box), run_time=1.1)
++        self.wait(0.8)
++
++        closing = Text("una ley local → una trayectoria global", font_size=34, color=gold)
++        closing.to_edge(DOWN)
++        self.play(FadeIn(closing), run_time=1.0)
++        self.wait(1.2)
+diff -ruN '--exclude=*.pdf' '--exclude=*.mp4' '--exclude=*.gif' '--exclude=*.png' '--exclude=*.npz' '--exclude=*.aux' '--exclude=*.log' '--exclude=*.out' '--exclude=*.fls' '--exclude=*.fdb_latexmk' chaos_review/repo/presentation/index.html chaos_final_v2/presentation/index.html
+--- chaos_review/repo/presentation/index.html	2026-05-25 13:35:46.000000000 +0000
++++ chaos_final_v2/presentation/index.html	2026-05-26 03:32:55.395272036 +0000
+@@ -72,10 +72,21 @@
+         <aside class="notes">Cada frame sale del modelo físico. La animación no es una coreografía: es la visualización de una solución numérica reproducible.</aside>
+       </section>
+ 
++      <section class="slide" data-scene="angle-space">
++        <canvas class="scene-canvas" data-canvas="angle-space"></canvas>
++        <div class="claim right compact">
++          <p class="kicker">2:20 - Espacio de ángulos</p>
++          <h2>Una huella del movimiento</h2>
++          <p>Tomamos la misma trayectoria y la miramos como señal: <code>θ₁(t)</code> contra <code>θ₂(t)</code>.</p>
++          <p class="equation long">un péndulo → una curva en espacio angular</p>
++        </div>
++        <aside class="notes">Este es el puente visual tomado de la estrategia de 2swap: antes de mostrar miles de condiciones iniciales, mostramos la huella de un solo péndulo en el plano theta1-theta2.</aside>
++      </section>
++
+       <section class="slide" data-scene="energy">
+         <canvas class="scene-canvas" data-canvas="energy"></canvas>
+         <div class="claim compact">
+-          <p class="kicker">2:30 - Control de calidad</p>
++          <p class="kicker">2:45 - Control de calidad</p>
+           <h2>La energía total casi no se mueve</h2>
+           <p>Si el integrador inventara energía, no podríamos confiar en la sensibilidad observada.</p>
+           <p class="equation">E(t) = T(t) + V(t) ≈ constante</p>
+@@ -89,7 +100,7 @@
+       <section class="slide" data-scene="divergence">
+         <canvas class="scene-canvas" data-canvas="divergence"></canvas>
+         <div class="claim right compact">
+-          <p class="kicker">3:05 - Sensibilidad</p>
++          <p class="kicker">3:20 - Sensibilidad</p>
+           <h2>Δ(t) crece</h2>
+           <p>Medimos la separación entre dos estados casi idénticos en escala logarítmica.</p>
+           <p class="equation long">Δ(t) = ||s(t) - s'(t)||</p>
+@@ -105,7 +116,7 @@
+           <div class="map-scan"></div>
+         </div>
+         <div class="claim compact">
+-          <p class="kicker">3:45 - Mapa global</p>
++          <p class="kicker">4:00 - Mapa global</p>
+           <h2>Un mapa de futuros</h2>
+           <p>Cada pixel nace de resolver la misma EDO con una condición inicial distinta.</p>
+           <p class="caveat">Color = tiempo hasta el primer flip.</p>
+@@ -116,7 +127,7 @@
+       <section class="slide" data-scene="close">
+         <canvas class="scene-canvas" data-canvas="close"></canvas>
+         <div class="claim center">
+-          <p class="kicker">4:35 - Cierre</p>
++          <p class="kicker">4:40 - Cierre</p>
+           <h2>Determinismo no significa predictibilidad práctica</h2>
+           <p>La física da las reglas. La computación revela sus consecuencias.</p>
+           <p class="sources">Física I + Cálculo I + EDOs + visualización científica</p>
+@@ -129,7 +140,7 @@
+     <nav class="chrome" aria-label="Controles de presentación">
+       <button id="prev" type="button" aria-label="Anterior">Anterior</button>
+       <div class="progress"><span id="progress-bar"></span></div>
+-      <output id="counter">1 / 9</output>
++      <output id="counter">1 / 10</output>
+       <button id="notes-toggle" type="button">Notas</button>
+       <button id="next" type="button" aria-label="Siguiente">Siguiente</button>
+     </nav>
+diff -ruN '--exclude=*.pdf' '--exclude=*.mp4' '--exclude=*.gif' '--exclude=*.png' '--exclude=*.npz' '--exclude=*.aux' '--exclude=*.log' '--exclude=*.out' '--exclude=*.fls' '--exclude=*.fdb_latexmk' chaos_review/repo/presentation/script.js chaos_final_v2/presentation/script.js
+--- chaos_review/repo/presentation/script.js	2026-05-25 13:36:34.000000000 +0000
++++ chaos_final_v2/presentation/script.js	2026-05-26 03:33:20.485155310 +0000
+@@ -333,6 +333,114 @@
+   }
+ }
+ 
++
++function drawAngleSpace(ctx, elapsed, w, h) {
++  const dbl = data.double;
++  const n = dbl.x1.length;
++  const count = Math.max(2, Math.min(n, Math.floor(((elapsed % 8.0) / 7.4) * n)));
++  const left = w * 0.08;
++  const top = h * 0.14;
++  const size = Math.min(w * 0.54, h * 0.70);
++  const x0 = left;
++  const y0 = top + size;
++
++  function theta1(i) {
++    return Math.atan2(dbl.x1[i], -dbl.y1[i]);
++  }
++  function theta2(i) {
++    return Math.atan2(dbl.x2[i] - dbl.x1[i], -(dbl.y2[i] - dbl.y1[i]));
++  }
++  function map(th1, th2) {
++    return [x0 + ((th1 + Math.PI) / (2 * Math.PI)) * size, y0 - ((th2 + Math.PI) / (2 * Math.PI)) * size];
++  }
++
++  ctx.save();
++  ctx.fillStyle = "rgba(2, 4, 13, 0.52)";
++  ctx.fillRect(x0, y0 - size, size, size);
++  ctx.strokeStyle = "oklch(31% 0.035 270)";
++  ctx.lineWidth = 1;
++  ctx.strokeRect(x0, y0 - size, size, size);
++
++  ctx.strokeStyle = "rgba(255,255,255,0.08)";
++  for (let i = 1; i < 4; i += 1) {
++    const gx = x0 + (i / 4) * size;
++    const gy = y0 - (i / 4) * size;
++    ctx.beginPath();
++    ctx.moveTo(gx, y0 - size);
++    ctx.lineTo(gx, y0);
++    ctx.stroke();
++    ctx.beginPath();
++    ctx.moveTo(x0, gy);
++    ctx.lineTo(x0 + size, gy);
++    ctx.stroke();
++  }
++
++  ctx.strokeStyle = "rgba(255,255,255,0.22)";
++  ctx.setLineDash([5, 7]);
++  ctx.beginPath();
++  ctx.moveTo(x0 + size / 2, y0 - size);
++  ctx.lineTo(x0 + size / 2, y0);
++  ctx.moveTo(x0, y0 - size / 2);
++  ctx.lineTo(x0 + size, y0 - size / 2);
++  ctx.stroke();
++  ctx.setLineDash([]);
++
++  const grad = ctx.createLinearGradient(x0, y0, x0 + size, y0 - size);
++  grad.addColorStop(0, "oklch(82% 0.16 205)");
++  grad.addColorStop(0.55, "oklch(84% 0.16 85)");
++  grad.addColorStop(1, "oklch(72% 0.22 335)");
++  ctx.strokeStyle = grad;
++  ctx.lineWidth = 2.2;
++  ctx.beginPath();
++  for (let i = 0; i < count; i += 1) {
++    const [px, py] = map(theta1(i), theta2(i));
++    if (i === 0) ctx.moveTo(px, py);
++    else ctx.lineTo(px, py);
++  }
++  ctx.stroke();
++
++  const [px, py] = map(theta1(count - 1), theta2(count - 1));
++  ctx.fillStyle = "oklch(84% 0.16 85)";
++  ctx.beginPath();
++  ctx.arc(px, py, 6, 0, Math.PI * 2);
++  ctx.fill();
++
++  ctx.fillStyle = "oklch(73% 0.025 275)";
++  ctx.font = "15px ui-monospace, monospace";
++  ctx.textAlign = "center";
++  ctx.fillText("θ₁(t)", x0 + size / 2, y0 + 34);
++  ctx.save();
++  ctx.translate(x0 - 34, y0 - size / 2);
++  ctx.rotate(-Math.PI / 2);
++  ctx.fillText("θ₂(t)", 0, 0);
++  ctx.restore();
++
++  ctx.textAlign = "left";
++  ctx.fillStyle = "oklch(94% 0.01 90)";
++  ctx.font = "17px ui-monospace, monospace";
++  ctx.fillText("un experimento individual", x0, y0 - size - 24);
++  ctx.fillStyle = "oklch(84% 0.16 85)";
++  ctx.fillText(`muestras: ${count.toLocaleString("es-CO")}`, x0 + size - 160, y0 - size - 24);
++
++  const miniScale = Math.min(w, h) * 0.11;
++  const idx = Math.min(n - 1, count - 1);
++  drawPendulum(ctx, { x1: dbl.x1, y1: dbl.y1, x2: dbl.x2, y2: dbl.y2 }, idx, w, h, {
++    ox: w * 0.78,
++    oy: h * 0.23,
++    scale: miniScale,
++    trail: 60,
++    color: "oklch(82% 0.16 205)",
++    bob: "oklch(84% 0.16 85)",
++    angles: true,
++  });
++
++  ctx.fillStyle = "oklch(73% 0.025 275)";
++  ctx.font = "16px system-ui, sans-serif";
++  ctx.textAlign = "left";
++  ctx.fillText("La animación física y la curva angular son el mismo movimiento visto desde dos coordenadas.", w * 0.62, h * 0.54);
++  ctx.restore();
++}
++
+ function drawEomOverlay(ctx, elapsed, w, h) {
+   const x = w * 0.64;
+   const y = h * 0.58;
+@@ -533,6 +641,10 @@
+     drawEomOverlay(ctx, elapsed, w, h);
+   }
+ 
++  if (name === "angle-space") {
++    drawAngleSpace(ctx, elapsed, w, h);
++  }
++
+   if (name === "energy") {
+     drawChart(
+       ctx,
+diff -ruN '--exclude=*.pdf' '--exclude=*.mp4' '--exclude=*.gif' '--exclude=*.png' '--exclude=*.npz' '--exclude=*.aux' '--exclude=*.log' '--exclude=*.out' '--exclude=*.fls' '--exclude=*.fdb_latexmk' chaos_review/repo/presentation/style.css chaos_final_v2/presentation/style.css
+--- chaos_review/repo/presentation/style.css	2026-05-25 13:36:05.000000000 +0000
++++ chaos_final_v2/presentation/style.css	2026-05-26 03:33:25.752581207 +0000
+@@ -446,3 +446,12 @@
+     transition-duration: 0.01ms !important;
+   }
+ }
++
++.slide[data-scene="angle-space"] .claim {
++  max-width: 500px;
++}
++
++.slide[data-scene="angle-space"] h2 {
++  max-width: 10ch;
++  font-size: clamp(42px, 6vw, 88px);
++}
+diff -ruN '--exclude=*.pdf' '--exclude=*.mp4' '--exclude=*.gif' '--exclude=*.png' '--exclude=*.npz' '--exclude=*.aux' '--exclude=*.log' '--exclude=*.out' '--exclude=*.fls' '--exclude=*.fdb_latexmk' chaos_review/repo/report/latex/informe_final.bbl chaos_final_v2/report/latex/informe_final.bbl
+--- chaos_review/repo/report/latex/informe_final.bbl	1970-01-01 00:00:00.000000000 +0000
++++ chaos_final_v2/report/latex/informe_final.bbl	2026-05-26 03:38:18.387350442 +0000
+@@ -0,0 +1,21 @@
++\begin{thebibliography}{6}
++
++\bibitem[{Heyl(2008)}]{heyl2008double}
++J.~S. Heyl, ``The double pendulum fractal,'' arXiv:0805.2464 (2008).
++
++\bibitem[{Rafat \emph{et~al.}(2009)Rafat, Wheatland, and Bedding}]{rafat2009dynamics}
++M.~Z. Rafat, M.~S. Wheatland, and T.~R. Bedding, ``Dynamics of a double pendulum with distributed mass,'' \emph{American Journal of Physics} \textbf{77}, 216--223 (2009).
++
++\bibitem[{SciPy Developers(2026)}]{scipy_solve_ivp}
++SciPy Developers, ``scipy.integrate.solve\_ivp,'' \url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html} (2026).
++
++\bibitem[{Reusser(2018)}]{reusser_double_pendulum}
++R.~Reusser, ``The Double Pendulum Fractal,'' \url{https://observablehq.com/@rreusser/the-double-pendulum-fractal} (2018).
++
++\bibitem[{Open Source Physics(2026)}]{tracker_video}
++Open Source Physics, ``Tracker Video Analysis and Modeling Tool,'' \url{https://physlets.org/tracker/} (2026).
++
++\bibitem[{2swap(2026)}]{twoswap_swaptube}
++2swap, ``swaptube: YouTube video renderer,'' \url{https://github.com/2swap/swaptube} (2026).
++
++\end{thebibliography}
+diff -ruN '--exclude=*.pdf' '--exclude=*.mp4' '--exclude=*.gif' '--exclude=*.png' '--exclude=*.npz' '--exclude=*.aux' '--exclude=*.log' '--exclude=*.out' '--exclude=*.fls' '--exclude=*.fdb_latexmk' chaos_review/repo/report/latex/informe_final.tex chaos_final_v2/report/latex/informe_final.tex
+--- chaos_review/repo/report/latex/informe_final.tex	2026-05-25 12:56:02.000000000 +0000
++++ chaos_final_v2/report/latex/informe_final.tex	2026-05-26 03:37:20.159868771 +0000
+@@ -16,7 +16,7 @@
+ \IfFileExists{siunitx.sty}{%
+   \usepackage{siunitx}
+   \sisetup{output-decimal-marker={,}, exponent-product=\cdot}
+-  \newcommand{\SIorNum}[2]{\SI{#1}{#2}}
++  \newcommand{\SIorNum}[2]{\SI{##1}{##2}}
+ }{%
+   \newcommand{\num}[1]{##1}
+   \newcommand{\SIorNum}[2]{##1\,\mathrm{##2}}
+diff -ruN '--exclude=*.pdf' '--exclude=*.mp4' '--exclude=*.gif' '--exclude=*.png' '--exclude=*.npz' '--exclude=*.aux' '--exclude=*.log' '--exclude=*.out' '--exclude=*.fls' '--exclude=*.fdb_latexmk' chaos_review/repo/requirements-manim.txt chaos_final_v2/requirements-manim.txt
+--- chaos_review/repo/requirements-manim.txt	1970-01-01 00:00:00.000000000 +0000
++++ chaos_final_v2/requirements-manim.txt	2026-05-26 03:34:32.618324237 +0000
+@@ -0,0 +1,2 @@
++# Optional: only needed if you want to render manim/chaos_geometry_scene.py
++manim>=0.19
+diff -ruN '--exclude=*.pdf' '--exclude=*.mp4' '--exclude=*.gif' '--exclude=*.png' '--exclude=*.npz' '--exclude=*.aux' '--exclude=*.log' '--exclude=*.out' '--exclude=*.fls' '--exclude=*.fdb_latexmk' chaos_review/repo/research/twoswap_chunk_analysis.md chaos_final_v2/research/twoswap_chunk_analysis.md
+--- chaos_review/repo/research/twoswap_chunk_analysis.md	2026-05-25 12:56:02.000000000 +0000
++++ chaos_final_v2/research/twoswap_chunk_analysis.md	2026-05-26 03:36:25.153701397 +0000
+@@ -51,3 +51,9 @@
+ 
+ - The simulation scene now shows the coupled ODE structure, `theta_ddot_1=f(theta_1,theta_2,omega_1,omega_2)` and `theta_ddot_2=g(...)`, so `solve_ivp` is motivated by dynamics rather than presented as a black box.
+ - The divergence scene now shows the two initially close pendulums beside the semilog `Delta(t)` chart, with a moving time cursor on the graph.
++
++## Iteración final aplicada
++
++Se añadió una escena explícita de **espacio de ángulos** entre la simulación numérica y el control de energía. Esta escena corrige el salto narrativo más importante: el público primero ve un experimento individual como curva `θ₁(t)` contra `θ₂(t)`, y solo después ve el mapa donde cada pixel corresponde a una condición inicial diferente.
++
++También se agregó una escena opcional de Manim (`manim/chaos_geometry_scene.py`) y un clip renderizable sin Manim (`scripts/render_manim_style_geometry.py`) para reforzar el estilo 3Blue1Brown sin hacer que la entrega dependa de instalar Manim.
+diff -ruN '--exclude=*.pdf' '--exclude=*.mp4' '--exclude=*.gif' '--exclude=*.png' '--exclude=*.npz' '--exclude=*.aux' '--exclude=*.log' '--exclude=*.out' '--exclude=*.fls' '--exclude=*.fdb_latexmk' chaos_review/repo/scripts/build_documents.py chaos_final_v2/scripts/build_documents.py
+--- chaos_review/repo/scripts/build_documents.py	2026-05-25 12:56:02.000000000 +0000
++++ chaos_final_v2/scripts/build_documents.py	2026-05-26 03:39:10.623744769 +0000
+@@ -240,19 +240,25 @@
+             ROOT / "figures" / "trajectory_mass2.png",
+         ),
+         (
+-            "4. Energia como control de calidad",
++            "4. Espacio de angulos",
++            "Una trayectoria deja una huella",
++            ["Graficamos theta1(t) contra theta2(t).", "Un experimento individual se vuelve una curva.", "Este puente prepara el mapa global."],
++            ROOT / "figures" / "angle_space_trace.png",
++        ),
++        (
++            "5. Energia como control de calidad",
+             "Si la energia explota, el resultado no sirve",
+             ["La energia cinetica y potencial cambian.", "La energia total permanece casi constante.", "La divergencia no viene de crear energia artificialmente."],
+             ROOT / "figures" / "energy_vs_time.png",
+         ),
+         (
+-            "5. Sensibilidad inicial",
++            "6. Sensibilidad inicial",
+             "Una diferencia invisible se vuelve visible",
+             ["Perturbacion: epsilon = 1e-6 rad.", "Delta(t) mide separacion en espacio de fases.", "La escala logaritmica revela crecimiento temprano."],
+             ROOT / "figures" / "divergence_semilog.png",
+         ),
+         (
+-            "6. Cada pixel es un experimento",
++            "7. Cada pixel es un experimento",
+             "Mapa de condiciones iniciales",
+             ["x = theta1(0), y = theta2(0).", "Color = tiempo hasta el primer flip.", "Aparecen regiones ordenadas, caoticas e islas de estabilidad."],
+             ROOT / "figures" / "flip_time_fractal_map.png",
+@@ -274,12 +280,12 @@
+             text_w = 8.8 * inch
+         y = h - 1.55 * inch
+         for bullet in bullets:
+-            c.setFillColor(GOLD if i in (1, 8) else CYAN)
++            c.setFillColor(GOLD if i in (1, 9) else CYAN)
+             c.circle(0.78 * inch, y - 0.1 * inch, 0.055 * inch, fill=1, stroke=0)
+             y = _draw_wrapped(c, bullet, 0.95 * inch, y, text_w, size=21, color=FG, leading=27) - 0.25 * inch
+         c.setFillColor(MUTED)
+         c.setFont("Helvetica", 9)
+-        c.drawRightString(w - 0.55 * inch, 0.35 * inch, f"{i}/8")
++        c.drawRightString(w - 0.55 * inch, 0.35 * inch, f"{i}/{len(slides)}")
+         c.showPage()
+ 
+     c.save()
+@@ -291,20 +297,39 @@
+         raise FileNotFoundError(f"Missing LaTeX report source: {REPORT_LATEX}")
+ 
+     latexmk = shutil.which("latexmk")
+-    if latexmk is None:
+-        raise RuntimeError("latexmk is required to build report/informe_final.pdf from LaTeX")
++    bibtex = shutil.which("bibtex")
++    pdflatex = shutil.which("pdflatex")
++
++    if latexmk is not None and bibtex is not None:
++        subprocess.run(
++            [
++                latexmk,
++                "-pdf",
++                "-interaction=nonstopmode",
++                "-halt-on-error",
++                REPORT_LATEX.name,
++            ],
++            cwd=REPORT_LATEX_DIR,
++            check=True,
++        )
++    elif pdflatex is not None:
++        # Fallback for minimal LaTeX installs where BibTeX is absent.
++        # The PDF still builds; references may remain numeric placeholders,
++        # which is preferable to making the whole reproducibility script fail.
++        for _ in range(2):
++            subprocess.run(
++                [
++                    pdflatex,
++                    "-interaction=nonstopmode",
++                    "-halt-on-error",
++                    REPORT_LATEX.name,
++                ],
++                cwd=REPORT_LATEX_DIR,
++                check=True,
++            )
++    else:
++        raise RuntimeError("pdflatex or latexmk is required to build report/informe_final.pdf from LaTeX")
+ 
+-    subprocess.run(
+-        [
+-            latexmk,
+-            "-pdf",
+-            "-interaction=nonstopmode",
+-            "-halt-on-error",
+-            REPORT_LATEX.name,
+-        ],
+-        cwd=REPORT_LATEX_DIR,
+-        check=True,
+-    )
+     if not REPORT_LATEX_PDF.exists():
+         raise FileNotFoundError(f"LaTeX did not produce {REPORT_LATEX_PDF}")
+     shutil.copy2(REPORT_LATEX_PDF, REPORT_PDF)
+diff -ruN '--exclude=*.pdf' '--exclude=*.mp4' '--exclude=*.gif' '--exclude=*.png' '--exclude=*.npz' '--exclude=*.aux' '--exclude=*.log' '--exclude=*.out' '--exclude=*.fls' '--exclude=*.fdb_latexmk' chaos_review/repo/scripts/render_manim_style_geometry.py chaos_final_v2/scripts/render_manim_style_geometry.py
+--- chaos_review/repo/scripts/render_manim_style_geometry.py	1970-01-01 00:00:00.000000000 +0000
++++ chaos_final_v2/scripts/render_manim_style_geometry.py	2026-05-26 03:35:00.779944102 +0000
+@@ -0,0 +1,120 @@
++from __future__ import annotations
++
++from pathlib import Path
++import shutil
++import sys
++
++import numpy as np
++import matplotlib.pyplot as plt
++from matplotlib.animation import FFMpegWriter
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT / "src"))
++
++from chaoslab.physics import DoublePendulumParams, simulate, positions
++from chaoslab.visuals import BG, FG, CYAN, MAGENTA, GOLD, GREEN
++
++OUT = ROOT / "animations" / "manim_style_geometry.mp4"
++MUTED = "#9a9aac"
++
++
++def setup(ax):
++    ax.set_facecolor(BG)
++    ax.figure.set_facecolor(BG)
++    ax.set_xlim(-2.6, 2.8)
++    ax.set_ylim(-2.7, 1.35)
++    ax.set_aspect("equal")
++    ax.set_xticks([])
++    ax.set_yticks([])
++    for spine in ax.spines.values():
++        spine.set_visible(False)
++
++
++def alpha_phase(now, start, duration=1.0):
++    return float(np.clip((now - start) / duration, 0.0, 1.0))
++
++
++def main() -> None:
++    if shutil.which("ffmpeg") is None:
++        raise SystemExit("ffmpeg is required to render animations/manim_style_geometry.mp4")
++
++    OUT.parent.mkdir(exist_ok=True)
++    params = DoublePendulumParams()
++    y0 = np.array([np.radians(110), 0.0, np.radians(-35), 0.0])
++    t, y = simulate(y0, params, t_max=8.0, n=480)
++    x1, y1, x2, y2 = positions(y, params)
++    theta1 = np.arctan2(x1, -y1)
++    theta2 = np.arctan2(x2 - x1, -(y2 - y1))
++
++    fps = 30
++    duration = 18
++    frames = fps * duration
++    fig = plt.figure(figsize=(12.8, 7.2), dpi=100)
++    writer = FFMpegWriter(fps=fps, bitrate=3500, codec="libx264", extra_args=["-pix_fmt", "yuv420p", "-preset", "medium"])
++
++    with writer.saving(fig, str(OUT), dpi=100):
++        for frame in range(frames):
++            now = frame / fps
++            fig.clf()
++            fig.patch.set_facecolor(BG)
++            ax = fig.add_subplot(111)
++            setup(ax)
++
++            k = min(len(t) - 1, int((now / duration) * (len(t) - 1)))
++            px1, py1, px2, py2 = x1[k], y1[k], x2[k], y2[k]
++
++            ax.text(-2.45, 1.08, "De ángulos a coordenadas", color=FG, fontsize=25, weight="bold")
++            ax.text(-2.45, 0.86, "escena opcional estilo 3Blue1Brown / Manim", color=MUTED, fontsize=12)
++
++            ax.plot([0, 0], [0, -1.35], color=MUTED, lw=1.0, ls="--", alpha=0.65)
++            ax.plot([px1, px1], [py1, py1 - 1.0], color=MUTED, lw=1.0, ls="--", alpha=0.45)
++            ax.plot([0, px1, px2], [0, py1, py2], color=FG, lw=3.2, alpha=0.92)
++            ax.scatter([px1, px2], [py1, py2], s=[62, 88], color=[MAGENTA, GOLD], zorder=5)
++            ax.text(0.13, -0.20, r"$\theta_1$", color=CYAN, fontsize=17)
++            ax.text(px1 + 0.08, py1 - 0.18, r"$\theta_2$", color=GOLD, fontsize=17)
++
++            a = alpha_phase(now, 3.0, 1.0)
++            if a > 0:
++                ax.plot([0, px1], [py1, py1], color=CYAN, lw=2.0, ls="--", alpha=a)
++                ax.text(-2.45, 0.35, r"$x_1=L_1\sin\theta_1$", color=CYAN, fontsize=18, alpha=a)
++            a = alpha_phase(now, 4.4, 1.0)
++            if a > 0:
++                ax.plot([0, 0], [0, py1], color=MAGENTA, lw=2.0, ls="--", alpha=a)
++                ax.text(-2.45, 0.07, r"$y_1=-L_1\cos\theta_1$", color=MAGENTA, fontsize=18, alpha=a)
++            a = alpha_phase(now, 5.8, 1.0)
++            if a > 0:
++                ax.plot([px1, px2], [py2, py2], color=GOLD, lw=2.0, ls="--", alpha=a)
++                ax.text(-2.45, -0.21, r"$x_2=x_1+L_2\sin\theta_2$", color=GOLD, fontsize=18, alpha=a)
++            a = alpha_phase(now, 7.2, 1.0)
++            if a > 0:
++                ax.plot([px1, px1], [py1, py2], color=GREEN, lw=2.0, ls="--", alpha=a)
++                ax.text(-2.45, -0.49, r"$y_2=y_1-L_2\cos\theta_2$", color=GREEN, fontsize=18, alpha=a)
++
++            a = alpha_phase(now, 9.0, 1.2)
++            if a > 0:
++                # Draw a small angle-space inset.
++                left, bottom, size = 0.78, -2.25, 1.45
++                ax.add_patch(plt.Rectangle((left, bottom), size, size, fill=False, ec="#333344", lw=1.1, alpha=a))
++                ax.axvline(left + size / 2, ymin=(bottom + 2.7) / 4.05, ymax=(bottom + size + 2.7) / 4.05, color="#66667a", lw=0.7, alpha=0.6 * a)
++                ax.axhline(bottom + size / 2, xmin=(left + 2.6) / 5.4, xmax=(left + size + 2.6) / 5.4, color="#66667a", lw=0.7, alpha=0.6 * a)
++                n = max(3, min(k, len(theta1) - 1))
++                xs = left + ((theta1[:n] + np.pi) / (2 * np.pi)) * size
++                ys = bottom + ((theta2[:n] + np.pi) / (2 * np.pi)) * size
++                ax.plot(xs, ys, color=CYAN, lw=1.7, alpha=a)
++                ax.scatter([xs[-1]], [ys[-1]], s=28, color=GOLD, alpha=a)
++                ax.text(left, bottom + size + 0.12, r"huella angular: $\theta_1(t)$ vs $\theta_2(t)$", color=FG, fontsize=13, alpha=a)
++                ax.text(left + size * 0.38, bottom - 0.18, r"$\theta_1$", color=MUTED, fontsize=11, alpha=a)
++                ax.text(left - 0.23, bottom + size * 0.45, r"$\theta_2$", color=MUTED, fontsize=11, alpha=a)
++
++            a = alpha_phase(now, 13.0, 1.0)
++            if a > 0:
++                ax.text(-2.45, -2.28, r"Una ley local produce una trayectoria global.", color=FG, fontsize=19, weight="bold", alpha=a)
++                ax.text(-2.45, -2.52, r"Y miles de trayectorias producen el mapa final.", color=GOLD, fontsize=14, alpha=a)
++
++            writer.grab_frame()
++
++    print(f"Wrote {OUT}")
++
++
++if __name__ == "__main__":
++    main()
+diff -ruN '--exclude=*.pdf' '--exclude=*.mp4' '--exclude=*.gif' '--exclude=*.png' '--exclude=*.npz' '--exclude=*.aux' '--exclude=*.log' '--exclude=*.out' '--exclude=*.fls' '--exclude=*.fdb_latexmk' chaos_review/repo/scripts/smoke_test.py chaos_final_v2/scripts/smoke_test.py
+--- chaos_review/repo/scripts/smoke_test.py	2026-05-25 13:36:59.000000000 +0000
++++ chaos_final_v2/scripts/smoke_test.py	2026-05-26 03:39:26.708423120 +0000
+@@ -42,6 +42,7 @@
+         ROOT / "figures" / "energy_vs_time.png",
+         ROOT / "figures" / "divergence_semilog.png",
+         ROOT / "figures" / "flip_time_fractal_map.png",
++        ROOT / "figures" / "angle_space_trace.png",
+         ROOT / "animations" / "double_pendulum.gif",
+         ROOT / "presentation" / "index.html",
+         ROOT / "presentation" / "script.js",
+@@ -57,6 +58,8 @@
+     assert "Lyapunov formal" in deck, "Presentation must avoid overclaiming formal chaos proof"
+     assert "Cada pixel" in deck, "Map slide must explain how the global map is produced"
+     assert "renderMap" in script, "Presentation script must render the progressive map"
++    assert "angle-space" in deck and "drawAngleSpace" in script, "Presentation must include an angle-space bridge before the global map"
++    assert (ROOT / "manim" / "chaos_geometry_scene.py").exists(), "Optional Manim scene should be present"
+     assert '"map"' in data_js and '"flipTimes"' in data_js, "Presentation data must include a coarse map payload"
+ 
+     print("ChaosLab smoke test passed")
+diff -ruN '--exclude=*.pdf' '--exclude=*.mp4' '--exclude=*.gif' '--exclude=*.png' '--exclude=*.npz' '--exclude=*.aux' '--exclude=*.log' '--exclude=*.out' '--exclude=*.fls' '--exclude=*.fdb_latexmk' chaos_review/repo/slides/guion_5_min.md chaos_final_v2/slides/guion_5_min.md
+--- chaos_review/repo/slides/guion_5_min.md	2026-05-25 13:37:46.000000000 +0000
++++ chaos_final_v2/slides/guion_5_min.md	2026-05-26 03:33:50.355803270 +0000
+@@ -32,7 +32,7 @@
+ 
+ Esto conecta la animación con el modelo físico. Cada punto que aparece en pantalla sale de estas coordenadas.
+ 
+-## 1:55–2:30 — Simulación numérica: resolver, no coreografiar
++## 1:55–2:20 — Simulación numérica: resolver, no coreografiar
+ 
+ Las ecuaciones del péndulo doble son acopladas y no tienen una solución analítica simple para condiciones generales. Por eso las resolvemos numéricamente como un problema de valor inicial:
+ 
+@@ -40,13 +40,19 @@
+ 
+ En el repositorio usamos `solve_ivp`. La simulación recibe una condición inicial, calcula aceleraciones y velocidades, y avanza en el tiempo. La animación no está inventada cuadro por cuadro; es una visualización de la solución numérica.
+ 
+-## 2:30–3:05 — Energía: control de calidad numérica
++## 2:20–2:45 — Espacio de ángulos: una huella del movimiento
++
++Antes de mostrar el mapa global, miramos un solo péndulo de otra manera. En vez de seguir únicamente la masa, graficamos `θ₁(t)` contra `θ₂(t)`.
++
++Esa curva es la huella angular de un experimento individual. Este paso prepara el mapa: si una trayectoria deja una curva, miles de condiciones iniciales pueden formar una geografía completa de comportamientos.
++
++## 2:45–3:15 — Energía: control de calidad numérica
+ 
+ Antes de hablar de caos, hay que verificar que el integrador no esté haciendo magia negra, que es una tradición humana lamentablemente común. Calculamos energía cinética, potencial y total.
+ 
+ La cinética y la potencial se intercambian, pero la energía total permanece casi constante. En esta corrida, la deriva relativa máxima está alrededor de `2.6×10⁻⁶`. Eso no prueba caos, pero sí nos dice que la simulación es confiable para analizar el comportamiento observado.
+ 
+-## 3:05–3:45 — Sensibilidad: una diferencia microscópica crece
++## 3:15–3:55 — Sensibilidad: una diferencia microscópica crece
+ 
+ Ahora corremos dos simulaciones casi idénticas y medimos
+ 
+@@ -56,13 +62,13 @@
+ 
+ La frase central es: la pérdida de predictibilidad no aparece porque falten leyes; aparece porque las leyes amplifican diferencias pequeñas.
+ 
+-## 3:45–4:35 — Mapa global: cada pixel es un experimento
++## 3:55–4:40 — Mapa global: cada pixel es un experimento
+ 
+ Ahora pasamos de una simulación a miles. Cada pixel del mapa representa una condición inicial: en el eje horizontal está `θ₁(0)` y en el eje vertical está `θ₂(0)`. Para cada punto resolvemos la misma EDO y medimos cuánto tarda en ocurrir el primer flip.
+ 
+ El color codifica ese tiempo. Las zonas oscuras no hacen flip dentro de la ventana simulada. Las regiones de color hacen flip en distintos tiempos. Lo importante no es solo que el mapa sea bonito, porque el universo no necesita otro salvapantallas; lo importante es la frontera irregular: puntos iniciales muy cercanos pueden producir futuros muy distintos.
+ 
+-## 4:35–5:00 — Cierre: determinismo no es predictibilidad práctica
++## 4:40–5:00 — Cierre: determinismo no es predictibilidad práctica
+ 
+ ChaosLab muestra que un sistema de mecánica clásica puede ser determinista y aun así difícil de predecir en la práctica. Las reglas son fijas; lo complicado es que pequeñas incertidumbres iniciales pueden crecer hasta cambiar el resultado observable.
+ 
+Binary files chaos_review/repo/src/chaoslab/__pycache__/__init__.cpython-313.pyc and chaos_final_v2/src/chaoslab/__pycache__/__init__.cpython-313.pyc differ
+Binary files chaos_review/repo/src/chaoslab/__pycache__/fractal.cpython-313.pyc and chaos_final_v2/src/chaoslab/__pycache__/fractal.cpython-313.pyc differ
+Binary files chaos_review/repo/src/chaoslab/__pycache__/physics.cpython-313.pyc and chaos_final_v2/src/chaoslab/__pycache__/physics.cpython-313.pyc differ

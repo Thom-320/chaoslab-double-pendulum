@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+tmp/
+output/
+research/reference_videos/
+.streamlit/
+report/latex/*.aux
+report/latex/*.bbl
+report/latex/*.blg
+report/latex/*.fdb_latexmk
+report/latex/*.fls
+report/latex/*.log
+report/latex/*.out
+report/latex/*Notes.bib
+report/latex/informe_final.pdf

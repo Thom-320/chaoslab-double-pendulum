@@ -1,0 +1,5 @@
+ChaosLab summary metrics
+initial_state_rad = [2.0943951023931953, 0.0, -0.17453292519943295, 0.0]
+epsilon_theta2 = 1e-06
+estimated_log_divergence_slope_1_to_7_s = 1.09593 1/s
+max_relative_energy_drift = 2.56285e-06

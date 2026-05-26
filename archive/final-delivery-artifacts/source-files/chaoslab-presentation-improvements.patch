@@ -1,0 +1,471 @@
+--- /tmp/index.orig	2026-05-25 13:27:37.053135803 +0000
++++ presentation/index.html	2026-05-25 13:29:51.116569197 +0000
+@@ -3,7 +3,7 @@
+   <head>
+     <meta charset="utf-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1" />
+-    <title>ChaosLab - Presentacion animada</title>
++    <title>ChaosLab - Presentación animada</title>
+     <link rel="stylesheet" href="style.css" />
+   </head>
+   <body>
+@@ -13,21 +13,21 @@
+         <div class="claim">
+           <p class="kicker">0:00 - Hook</p>
+           <h1>Mismas leyes, futuros distintos</h1>
+-          <p>Una diferencia inicial de <code>1e-6 rad</code> puede volverse macroscopica.</p>
++          <p>Una diferencia inicial de <code>1e-6 rad</code> puede volverse macroscópica.</p>
+         </div>
+-        <aside class="notes">Dos sistemas casi iguales se separan. La pregunta no es si las leyes fallan, sino por que amplifican diferencias pequenas.</aside>
++        <aside class="notes">Dos sistemas casi iguales se separan. La pregunta no es si las leyes fallan, sino por qué amplifican diferencias pequeñas.</aside>
+       </section>
+ 
+       <section class="slide" data-scene="simple">
+         <canvas class="scene-canvas" data-canvas="simple"></canvas>
+         <div class="claim right">
+-          <p class="kicker">0:25 - Fisica I base</p>
++          <p class="kicker">0:25 - Física I base</p>
+           <h2>Primero, el caso ordenado</h2>
+-          <p>El angulo se mide desde la vertical hacia abajo. Esa convencion tambien se usa en el pendulo doble.</p>
++          <p>El ángulo se mide desde la vertical hacia abajo. Esa convención también se usa en el péndulo doble.</p>
+           <p class="equation">&omega; = d&theta; / dt</p>
+-          <p class="equation">sin(&theta;) &asymp; &theta; para |&theta;| &ll; 1</p>
++          <p class="equation">sin(&theta;) &approx; &theta; para |&theta;| &ll; 1</p>
+         </div>
+-        <aside class="notes">Esta escena ancla el proyecto en Fisica I y Calculo I: derivadas, oscilacion y aproximacion de angulo pequeno.</aside>
++        <aside class="notes">Esta escena ancla el proyecto en Física I y Cálculo I: derivadas, oscilación y aproximación de ángulo pequeño.</aside>
+       </section>
+ 
+       <section class="slide" data-scene="state">
+@@ -38,45 +38,57 @@
+           <p>El estado pasa de una coordenada a cuatro variables acopladas.</p>
+           <p class="state-vector">s(t) = [&theta;<sub>1</sub>, &omega;<sub>1</sub>, &theta;<sub>2</sub>, &omega;<sub>2</sub>]</p>
+         </div>
+-        <aside class="notes">No cambiamos de leyes. Seguimos con gravedad, energia y rotacion, pero ahora los grados de libertad se acoplan.</aside>
++        <aside class="notes">No cambiamos de leyes. Seguimos con gravedad, energía y rotación, pero ahora los grados de libertad se acoplan.</aside>
+       </section>
+ 
+       <section class="slide" data-scene="geometry">
+         <canvas class="scene-canvas" data-canvas="geometry"></canvas>
+         <div class="claim compact">
+-          <p class="kicker">1:20 - Modelo geometrico</p>
+-          <h2>De angulos a posiciones</h2>
+-          <p>Las coordenadas salen por trigonometria, no por dibujo libre.</p>
+-          <div class="formula-stack" aria-label="Coordenadas del pendulo doble">
++          <p class="kicker">1:20 - Modelo geométrico</p>
++          <h2>De ángulos a posiciones</h2>
++          <p>Las coordenadas salen por trigonometría, no por dibujo libre.</p>
++          <div class="formula-stack" aria-label="Coordenadas del péndulo doble">
+             <p><span>x<sub>1</sub></span> = L<sub>1</sub> sin(&theta;<sub>1</sub>)</p>
+             <p><span>y<sub>1</sub></span> = -L<sub>1</sub> cos(&theta;<sub>1</sub>)</p>
+             <p><span>x<sub>2</sub></span> = x<sub>1</sub> + L<sub>2</sub> sin(&theta;<sub>2</sub>)</p>
+             <p><span>y<sub>2</sub></span> = y<sub>1</sub> - L<sub>2</sub> cos(&theta;<sub>2</sub>)</p>
+           </div>
+         </div>
+-        <aside class="notes">Esta es la escena puente: primero construimos la posicion de la primera masa, luego la segunda como desplazamiento relativo desde la primera.</aside>
++        <aside class="notes">Esta es la escena puente: primero construimos la posición de la primera masa, luego la segunda como desplazamiento relativo desde la primera.</aside>
+       </section>
+ 
+       <section class="slide" data-scene="simulation">
+         <canvas class="scene-canvas" data-canvas="simulation"></canvas>
+         <div class="claim compact">
+-          <p class="kicker">1:55 - Simulacion numerica</p>
++          <p class="kicker">1:55 - Simulación numérica</p>
+           <h2>Resolver, no dibujar a mano</h2>
+           <p><code>solve_ivp</code> integra el sistema como problema de valor inicial.</p>
+           <p class="equation">d s / dt = f(t, s)</p>
+         </div>
+-        <aside class="notes">Cada frame sale del modelo fisico. La animacion es visualizacion de una solucion numerica.</aside>
++        <aside class="notes">Cada frame sale del modelo físico. La animación es visualización de una solución numérica.</aside>
++      </section>
++
++      <section class="slide" data-scene="angle-space">
++        <canvas class="scene-canvas" data-canvas="angle-space"></canvas>
++        <div class="claim compact">
++          <p class="kicker">2:20 - Espacio de ángulos</p>
++          <h2>Mirar el movimiento como señal</h2>
++          <p>En vez de seguir solo la masa, graficamos <code>&theta;<sub>1</sub></code> contra <code>&theta;<sub>2</sub></code>.</p>
++          <p class="equation long">orden local, geometría global compleja</p>
++        </div>
++        <aside class="notes">Esta escena prepara el mapa global. Primero vemos una trayectoria individual en espacio de ángulos; luego repetimos el experimento para miles de condiciones iniciales.</aside>
+       </section>
+ 
+       <section class="slide" data-scene="energy">
+         <canvas class="scene-canvas" data-canvas="energy"></canvas>
+         <div class="claim compact">
+           <p class="kicker">2:30 - Control de calidad</p>
+-          <h2>La energia total casi no se mueve</h2>
+-          <p>Si el integrador inventara energia, no podriamos confiar en el caos observado.</p>
+-          <p class="equation">E(t) = T(t) + V(t) &asymp; constante</p>
++          <h2>La energía total casi no se mueve</h2>
++          <p>Si el integrador inventara energía, no podríamos confiar en el caos observado.</p>
++          <p class="equation">E(t) = T(t) + V(t) &approx; constante</p>
++          <p class="metric">deriva relativa máxima &asymp; 2.56&times;10<sup>-6</sup></p>
+         </div>
+-        <aside class="notes">La energia total es el ancla de confianza. La divergencia no se debe a que el modelo viole la conservacion de energia.</aside>
++        <aside class="notes">La energía total es el ancla de confianza. La divergencia no se debe a que el modelo viole la conservación de energía.</aside>
+       </section>
+ 
+       <section class="slide" data-scene="divergence">
+@@ -84,41 +96,46 @@
+         <div class="claim right compact">
+           <p class="kicker">3:05 - Sensibilidad</p>
+           <h2>&Delta;(t) crece</h2>
+-          <p>Medimos la separacion entre dos estados casi identicos en escala logaritmica.</p>
++          <p>Medimos la separación entre dos estados casi idénticos en escala logarítmica.</p>
+           <p class="equation long">&Delta;(t) = ||s(t) - s'(t)||</p>
++          <p class="metric">pendiente temprana de log &Delta; &asymp; 1.10 s<sup>-1</sup></p>
+         </div>
+-        <aside class="notes">No lo llamamos exponente de Lyapunov formal. Es una evidencia cuantitativa de sensibilidad a condiciones iniciales.</aside>
++        <aside class="notes">No lo llamamos exponente de Lyapunov formal. Es evidencia numérica de sensibilidad a condiciones iniciales.</aside>
+       </section>
+ 
+       <section class="slide" data-scene="map">
+         <div class="map-stage">
+-          <img src="../figures/flip_time_fractal_map.png" alt="Mapa de condiciones iniciales del pendulo doble" />
+-          <div class="map-scan"></div>
++          <img src="../figures/flip_time_fractal_map.png" alt="Mapa de condiciones iniciales del péndulo doble" />
++          <div class="map-grid" aria-hidden="true"></div>
++          <div class="map-scan" aria-hidden="true"></div>
++          <div class="map-axis map-x">&theta;<sub>1</sub>(0)</div>
++          <div class="map-axis map-y">&theta;<sub>2</sub>(0)</div>
++          <div class="map-legend">14&nbsp;400 simulaciones<br><span>color = tiempo hasta flip</span></div>
+         </div>
+         <div class="claim compact">
+-          <p class="kicker">3:45 - Observable finale</p>
++          <p class="kicker">3:55 - Mapa global</p>
+           <h2>Un mapa de futuros</h2>
+-          <p>Color = tiempo hasta el primer flip. Las fronteras revelan sensibilidad.</p>
++          <p>Cada pixel integra una condición inicial. Las fronteras revelan sensibilidad.</p>
+         </div>
+-        <aside class="notes">Este es el momento 2swap: una regla determinista local produce una imagen global compleja.</aside>
++        <aside class="notes">Este es el momento visual fuerte: una regla determinista local produce una imagen global compleja.</aside>
+       </section>
+ 
+       <section class="slide" data-scene="close">
+         <canvas class="scene-canvas" data-canvas="close"></canvas>
+         <div class="claim center">
+           <p class="kicker">4:35 - Cierre</p>
+-          <h2>Deterministico no significa predecible</h2>
+-          <p>La fisica da las reglas. La computacion revela sus consecuencias.</p>
+-          <p class="sources">Fisica I + Calculo I + EDOs + visualizacion cientifica</p>
++          <h2>Determinístico no significa predecible</h2>
++          <p>La física da las reglas. La computación revela sus consecuencias.</p>
++          <p class="sources">Física I + Cálculo I + EDOs + visualización científica</p>
+         </div>
+-        <aside class="notes">Cerrar con limitaciones: sin rozamiento, mapa exploratorio, validacion por video como trabajo futuro.</aside>
++        <aside class="notes">Cerrar con limitaciones: sin rozamiento, mapa exploratorio, validación por video como trabajo futuro.</aside>
+       </section>
+     </main>
+ 
+-    <nav class="chrome" aria-label="Controles de presentacion">
++    <nav class="chrome" aria-label="Controles de presentación">
+       <button id="prev" type="button" aria-label="Anterior">Anterior</button>
+       <div class="progress"><span id="progress-bar"></span></div>
+-      <output id="counter">1 / 8</output>
++      <output id="counter">1 / 10</output>
+       <button id="notes-toggle" type="button">Notas</button>
+       <button id="next" type="button" aria-label="Siguiente">Siguiente</button>
+     </nav>
+--- /tmp/script.orig	2026-05-25 13:27:37.070337011 +0000
++++ presentation/script.js	2026-05-25 13:28:44.893327823 +0000
+@@ -348,7 +348,96 @@
+   ctx.fillText("\u03b8\u0308\u2082 = g(\u03b8\u2081, \u03b8\u2082, \u03c9\u2081, \u03c9\u2082)", x, y + 82);
+   ctx.globalAlpha = pulse;
+   ctx.fillStyle = "oklch(72% 0.22 335)";
+-  ctx.fillText("terminos cruzados + senos/cosenos", x, y + 126);
++  ctx.fillText("términos cruzados + senos/cosenos", x, y + 126);
++  ctx.restore();
++}
++
++
++function wrapPi(a) {
++  return Math.atan2(Math.sin(a), Math.cos(a));
++}
++
++function anglesFromSeries(series, i) {
++  const th1 = Math.atan2(series.x1[i], -series.y1[i]);
++  const th2 = Math.atan2(series.x2[i] - series.x1[i], -(series.y2[i] - series.y1[i]));
++  return [wrapPi(th1), wrapPi(th2)];
++}
++
++function drawAngleSpace(ctx, elapsed, w, h) {
++  const dbl = data.double;
++  const idx = Math.floor((elapsed * 42) % dbl.x1.length);
++  const series = { x1: dbl.x1, y1: dbl.y1, x2: dbl.x2, y2: dbl.y2 };
++  drawPendulum(ctx, series, idx, w, h, {
++    ox: w * 0.30,
++    oy: h * 0.31,
++    scale: Math.min(w, h) * 0.17,
++    trail: 95,
++    angles: true,
++    color: "oklch(82% 0.16 205)",
++    bob: "oklch(84% 0.16 85)",
++  });
++
++  const x0 = w * 0.54;
++  const y0 = h * 0.19;
++  const size = Math.min(w * 0.34, h * 0.54);
++  const cx = x0 + size / 2;
++  const cy = y0 + size / 2;
++  ctx.save();
++  ctx.strokeStyle = "oklch(31% 0.035 270)";
++  ctx.lineWidth = 1.2;
++  ctx.strokeRect(x0, y0, size, size);
++
++  ctx.globalAlpha = 0.42;
++  ctx.beginPath();
++  ctx.moveTo(cx, y0);
++  ctx.lineTo(cx, y0 + size);
++  ctx.moveTo(x0, cy);
++  ctx.lineTo(x0 + size, cy);
++  ctx.stroke();
++  ctx.globalAlpha = 1;
++
++  ctx.fillStyle = "oklch(73% 0.025 275)";
++  ctx.font = "15px ui-monospace, monospace";
++  ctx.textAlign = "center";
++  ctx.fillText("θ₁", x0 + size, y0 + size + 36);
++  ctx.save();
++  ctx.translate(x0 - 34, y0 + 22);
++  ctx.rotate(-Math.PI / 2);
++  ctx.fillText("θ₂", 0, 0);
++  ctx.restore();
++
++  const project = (th1, th2) => {
++    const x = x0 + ((th1 + Math.PI) / (2 * Math.PI)) * size;
++    const y = y0 + size - ((th2 + Math.PI) / (2 * Math.PI)) * size;
++    return [x, y];
++  };
++
++  const start = Math.max(0, idx - 260);
++  ctx.strokeStyle = "oklch(82% 0.16 205)";
++  ctx.lineWidth = 2.2;
++  ctx.beginPath();
++  for (let i = start; i <= idx; i += 1) {
++    const [th1, th2] = anglesFromSeries(series, i);
++    const [x, y] = project(th1, th2);
++    if (i === start) ctx.moveTo(x, y);
++    else ctx.lineTo(x, y);
++  }
++  ctx.stroke();
++
++  const [tha, thb] = anglesFromSeries(series, idx);
++  const [px, py] = project(tha, thb);
++  ctx.fillStyle = "oklch(84% 0.16 85)";
++  ctx.beginPath();
++  ctx.arc(px, py, 6, 0, Math.PI * 2);
++  ctx.fill();
++
++  ctx.fillStyle = "oklch(94% 0.01 90)";
++  ctx.font = "20px system-ui";
++  ctx.textAlign = "left";
++  ctx.fillText("trayectoria en espacio de ángulos", x0, y0 - 26);
++  ctx.font = "15px system-ui";
++  ctx.fillStyle = "oklch(73% 0.025 275)";
++  ctx.fillText("un punto = un estado angular del sistema", x0, y0 + size + 64);
+   ctx.restore();
+ }
+ 
+@@ -411,6 +500,10 @@
+     drawEomOverlay(ctx, elapsed, w, h);
+   }
+ 
++  if (name === "angle-space") {
++    drawAngleSpace(ctx, elapsed, w, h);
++  }
++
+   if (name === "energy") {
+     drawChart(
+       ctx,
+--- /tmp/style.orig	2026-05-25 13:27:37.090022279 +0000
++++ presentation/style.css	2026-05-25 13:29:07.953856752 +0000
+@@ -177,6 +177,18 @@
+   font-size: clamp(17px, 1.65vw, 24px);
+ }
+ 
++.metric {
++  display: inline-block;
++  margin-top: 14px;
++  padding: 8px 13px;
++  border: 1px solid oklch(31% 0.035 270);
++  border-radius: 999px;
++  color: var(--green);
++  background: oklch(10% 0.018 260 / 0.52);
++  font-size: clamp(15px, 1.35vw, 19px);
++  letter-spacing: 0.01em;
++}
++
+ .state-vector sub,
+ .equation sub {
+   font-size: 0.68em;
+@@ -235,6 +247,62 @@
+   animation: scan 5s var(--ease) infinite alternate;
+ }
+ 
++.map-grid {
++  position: absolute;
++  inset: 5.8% 10.2% 10.8% 10.2%;
++  opacity: 0.20;
++  background-image:
++    linear-gradient(var(--line) 1px, transparent 1px),
++    linear-gradient(90deg, var(--line) 1px, transparent 1px);
++  background-size: 24px 24px;
++  mix-blend-mode: screen;
++  pointer-events: none;
++}
++
++.map-axis,
++.map-legend {
++  position: absolute;
++  z-index: 2;
++  border: 1px solid oklch(31% 0.035 270 / 0.82);
++  background: oklch(8% 0.015 260 / 0.72);
++  color: var(--text);
++  box-shadow: 0 12px 42px oklch(2% 0.01 260 / 0.38);
++  backdrop-filter: blur(7px);
++}
++
++.map-axis {
++  padding: 6px 10px;
++  border-radius: 999px;
++  font: 700 15px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
++  color: var(--cyan);
++}
++
++.map-x {
++  left: 50%;
++  bottom: 1.5%;
++  transform: translateX(-50%);
++}
++
++.map-y {
++  left: 0.5%;
++  top: 50%;
++  transform: translateY(-50%) rotate(-90deg);
++}
++
++.map-legend {
++  right: 4.5%;
++  top: 5%;
++  padding: 10px 13px;
++  border-radius: 14px;
++  color: var(--gold);
++  font-size: clamp(13px, 1.25vw, 16px);
++  line-height: 1.25;
++}
++
++.map-legend span {
++  color: var(--muted);
++}
++
+ .chrome {
+   position: fixed;
+   left: 24px;
+@@ -371,6 +439,12 @@
+     max-height: 100%;
+   }
+ 
++  .map-grid,
++  .map-axis,
++  .map-legend {
++    display: none;
++  }
++
+   .chrome {
+     grid-template-columns: 1fr auto 1fr;
+   }
+--- /tmp/guion.orig	2026-05-25 13:27:37.106142056 +0000
++++ slides/guion_5_min.md	2026-05-25 13:29:34.922838854 +0000
+@@ -1,53 +1,67 @@
+-# Guion de 5 minutos - ChaosLab
++# Guion final de 5 minutos - ChaosLab
+ 
+ ## 0:00-0:25 - Hook
+ 
+-Miren estos dos pendulos. A simple vista empiezan igual. Obedecen las mismas leyes, tienen las mismas masas y longitudes, y la diferencia inicial es de apenas `1e-6 rad`. Eso es invisible para nosotros. Sin embargo, despues de unos segundos, sus futuros se separan.
++Miren estos dos péndulos. A simple vista empiezan igual: mismas masas, mismas longitudes y las mismas leyes de Newton. La única diferencia es una perturbación inicial de apenas `1e-6 rad`, invisible para cualquier montaje de aula.
+ 
+-La pregunta del proyecto es: **si las leyes son deterministas, por que el futuro deja de ser predecible?**
++La pregunta del proyecto es: **si el sistema es determinista, por qué el futuro deja de ser predecible en la práctica?**
+ 
+-## 0:25-0:55 - Fisica I base
++## 0:25-0:55 - Física I base
+ 
+-Partimos del pendulo simple, un sistema clasico de Fisica I. Su posicion se describe con un angulo `theta`. La velocidad angular es `d theta / dt` y la aceleracion angular es `d^2 theta / dt^2`. Para angulos pequenos usamos `sin(theta) ~= theta`, y por eso aparece un movimiento casi periodico.
++Partimos del péndulo simple, un sistema clásico de Física I. Su posición se describe con un ángulo `theta`; su velocidad angular es `omega = dtheta/dt`; y su aceleración angular es `d²theta/dt²`. Para ángulos pequeños usamos la aproximación de Cálculo I `sin(theta) ≈ theta`, y el movimiento se vuelve casi periódico.
+ 
+-Ese es el caso ordenado: energia potencial se transforma en energia cinetica y luego vuelve.
++Ese es nuestro caso ordenado: energía potencial y energía cinética se intercambian de forma regular.
+ 
+-## 0:55-1:25 - Agregar una segunda masa
++## 0:55-1:20 - Agregar una segunda masa
+ 
+-Ahora agregamos una segunda masa. El estado ya no es solo un angulo: es `[theta1, omega1, theta2, omega2]`. El movimiento de una barra afecta a la otra. Las ecuaciones quedan acopladas y aparecen terminos no lineales.
++Ahora agregamos una segunda masa. El estado ya no es un solo ángulo: es `[theta1, omega1, theta2, omega2]`. El movimiento de una barra afecta a la otra. Las ecuaciones quedan acopladas y aparecen términos no lineales.
+ 
+-No cambiamos de universo fisico. Seguimos usando gravedad, energia y movimiento rotacional. Solo aumentamos el numero de grados de libertad.
++No cambiamos de universo físico. Seguimos usando gravedad, energía y rotación. Solo aumentamos los grados de libertad. Naturalmente, con dos variables más, la naturaleza decide ponerse dramática.
+ 
+-## 1:25-2:05 - Simulacion numerica
++## 1:20-1:55 - Modelo geométrico
+ 
+-Como las ecuaciones del pendulo doble no tienen una solucion analitica simple para condiciones generales, resolvemos el sistema numericamente. En Python usamos `solve_ivp`, que integra problemas de valor inicial para sistemas de ecuaciones diferenciales.
++Las posiciones no se dibujan a ojo. Salen de trigonometría:
+ 
+-La simulacion recibe una condicion inicial, calcula velocidades y aceleraciones, y avanza en el tiempo. El resultado no es una animacion inventada: cada punto sale de integrar el modelo fisico.
++`x1 = L1 sin(theta1)`, `y1 = -L1 cos(theta1)`, `x2 = x1 + L2 sin(theta2)`, `y2 = y1 - L2 cos(theta2)`.
+ 
+-## 2:05-2:45 - Energia como prueba de calidad
++Esta escena importa porque conecta vectores, coordenadas y derivadas. Una vez tenemos posición, podemos calcular velocidad, energía y evolución temporal.
+ 
+-Antes de hablar de caos, hay que comprobar que el modelo no esta fallando. Por eso calculamos energia cinetica, potencial y total.
++## 1:55-2:20 - Simulación numérica
+ 
+-La cinetica y la potencial suben y bajan, pero la energia total permanece casi constante. Esa es la prueba clave: la divergencia no aparece porque el integrador este creando energia de la nada. Aparece porque el sistema es no lineal.
++Como las ecuaciones del péndulo doble son acopladas y no lineales, para condiciones generales no usamos una fórmula cerrada simple. Resolvemos un problema de valor inicial: `ds/dt = f(t,s)`.
+ 
+-## 2:45-3:35 - Sensibilidad inicial
++En Python se integra con `solve_ivp`. La animación no es decoración: cada frame sale de resolver el modelo físico.
++
++## 2:20-2:45 - Espacio de ángulos
++
++Ahora dejamos de mirar solo la masa y miramos la señal del sistema. Graficamos `theta1` contra `theta2`. Un movimiento regular dibujaría una curva limpia; un movimiento más complejo empieza a llenar el espacio de forma irregular.
++
++Esta escena prepara el mapa final: primero estudiamos una trayectoria; luego repetimos el experimento para miles de condiciones iniciales.
++
++## 2:45-3:20 - Energía como prueba de calidad
++
++Antes de hablar de sensibilidad, hay que verificar que el modelo no esté fallando. Calculamos energía cinética, potencial y total.
++
++La cinética y la potencial suben y bajan, pero la energía total permanece casi constante. En el caso base, la deriva relativa máxima es aproximadamente `2.56e-6`. Esa es la prueba clave: la divergencia no aparece porque el integrador esté creando energía de la nada.
++
++## 3:20-3:55 - Sensibilidad inicial
+ 
+ Ahora corremos dos simulaciones. La segunda solo cambia `theta2(0)` en `1e-6 rad`. Medimos la distancia entre ambos estados con `Delta(t)`.
+ 
+-En escala logaritmica, la distancia crece rapidamente durante la ventana inicial. No estamos afirmando un exponente de Lyapunov formal; estamos mostrando una evidencia cuantitativa de sensibilidad a condiciones iniciales.
++En escala logarítmica, la distancia crece rápidamente durante la ventana inicial. No afirmamos un exponente de Lyapunov formal; mostramos evidencia numérica de sensibilidad a condiciones iniciales.
+ 
+-La frase central es esta: **la perdida de predictibilidad no aparece por falta de leyes, sino porque las leyes amplifican diferencias pequenas.**
++La frase central es esta: **la pérdida de predictibilidad no aparece por falta de leyes, sino porque las leyes amplifican diferencias pequeñas.**
+ 
+-## 3:35-4:35 - Mapa de condiciones iniciales
++## 3:55-4:35 - Mapa de condiciones iniciales
+ 
+-Ahora convertimos una simulacion en miles. Cada pixel del mapa es un experimento: escogemos `theta1(0)` y `theta2(0)`, soltamos el pendulo y medimos cuanto tarda en hacer el primer flip.
++Ahora convertimos una simulación en miles. Cada pixel del mapa es un experimento: escogemos `theta1(0)` y `theta2(0)`, soltamos el péndulo desde el reposo y medimos cuánto tarda en hacer el primer flip.
+ 
+-Las zonas oscuras no hacen flip dentro de la ventana simulada. Las regiones de color hacen flip en distintos tiempos. Lo importante son las fronteras: pequenas variaciones en el punto inicial pueden cambiar completamente el resultado.
++Las zonas oscuras no hacen flip dentro de la ventana simulada. Las regiones de color hacen flip en distintos tiempos. Lo importante son las fronteras: pequeñas variaciones iniciales pueden cambiar drásticamente el resultado.
+ 
+-Este es el momento 2swap del proyecto: una regla local sencilla produce una imagen global compleja.
++Este es el cierre visual del proyecto: una regla local determinista produce una imagen global compleja.
+ 
+ ## 4:35-5:00 - Cierre
+ 
+-ChaosLab muestra que un sistema clasico puede ser determinista y, aun asi, dificil de predecir en la practica. La fisica da las reglas; la computacion nos deja ver sus consecuencias.
++ChaosLab muestra que un sistema clásico puede ser determinista y, aun así, difícil de predecir en la práctica. La física da las reglas; la computación revela sus consecuencias.
+ 
+-Como trabajo futuro, se puede agregar validacion experimental con video tracking, comparar integradores o entrenar un modelo surrogate que clasifique regiones de estabilidad. Pero el nucleo ya esta: mecanica clasica, calculo, energia, ecuaciones diferenciales y visualizacion.
++Como trabajo futuro se puede agregar validación experimental con video tracking, comparar integradores o entrenar un modelo surrogate que clasifique regiones de estabilidad. Pero el núcleo ya está: mecánica clásica, Cálculo I, energía, ecuaciones diferenciales y visualización científica.

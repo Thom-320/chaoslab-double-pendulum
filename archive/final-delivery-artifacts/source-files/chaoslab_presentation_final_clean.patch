@@ -1,0 +1,664 @@
+diff -ruN '--exclude=__pycache__' '--exclude=*.pyc' '--exclude=chaos_data.js' repo_original/docs/presentation_final_director_notes.md repo/docs/presentation_final_director_notes.md
+--- repo_original/docs/presentation_final_director_notes.md	1970-01-01 00:00:00.000000000 +0000
++++ repo/docs/presentation_final_director_notes.md	2026-05-25 13:37:46.412649704 +0000
+@@ -0,0 +1,33 @@
++# Notas de dirección técnica — presentación final ChaosLab
++
++## Veredicto de formato
++
++Formato principal recomendado: **presentación HTML animada en vivo**, con `animations/chaoslab_pitch_5min.mp4` como respaldo y `streamlit run app.py` como demo opcional para preguntas. No conviene migrar todo a Manim ni a un pipeline tipo Swaptube en esta etapa: el proyecto ya tiene datos, canvas, assets, reporte y video; reescribirlo ahora cambiaría riesgo por vanidad, ese combustible renovable de los proyectos que fallan.
++
++## Diagnóstico breve
++
++Fortalezas actuales: el modelo físico está bien anclado en Física I, las coordenadas son explícitas, la integración numérica es reproducible, la conservación de energía funciona como control de calidad y el mapa de condiciones iniciales ya existe.
++
++Debilidades actuales: el mapa aparecía demasiado como imagen final y no como resultado de miles de experimentos computacionales; el guion necesitaba más cuidado con el sobre-reclamo de “caos”; había falta de tildes y pulido en el español; y la escena de divergencia necesitaba una advertencia clara de que la pendiente no es un exponente de Lyapunov formal.
++
++## Chunks de referencia 2swap adaptados
++
++1. **Hook:** contraste entre trayectorias casi idénticas y futuros distintos. En ChaosLab se usa la perturbación `10⁻⁶ rad`.
++2. **Construcción del modelo:** pasar de péndulo simple a estado `[θ₁,ω₁,θ₂,ω₂]` y coordenadas cartesianas.
++3. **Visualizaciones locales:** trayectoria, energía y divergencia. Aquí se sacrifica el audio de 2swap para mantener una defensa de Física I más fuerte.
++4. **Mapa global:** cada pixel es una simulación. Este era el punto débil y quedó reforzado con un mapa progresivo en canvas.
++5. **Cierre:** determinismo no implica predictibilidad práctica, sin venderlo como prueba formal completa de caos.
++
++## Cambios realizados
++
++- `presentation/index.html`: copy pulido, tildes, métricas, caveat de Lyapunov y nuevo mapa narrativo.
++- `presentation/script.js`: render progresivo del mapa usando una malla reducida real exportada desde `data/flip_time_map_120.npz`.
++- `presentation/style.css`: estilos para métricas, caveats y mapa computacional.
++- `scripts/export_presentation_data.py`: ahora exporta un payload reducido del mapa para el HTML.
++- `scripts/smoke_test.py`: ahora verifica que la presentación tenga datos, mapa y advertencia de no sobre-reclamo.
++- `slides/guion_5_min.md`: guion final cronometrado.
++- `src/chaoslab/physics.py`: se quitaron frases coloquiales en docstrings para dejar el código más profesional.
++
++## Riesgo restante
++
++El video MP4 ya existe, pero no conviene regenerarlo justo antes de entregar salvo que sea estrictamente necesario. La versión HTML es más flexible para exposición oral y el MP4 debe quedar como respaldo si el navegador o el proyector deciden participar en la tragedia.
+diff -ruN '--exclude=__pycache__' '--exclude=*.pyc' '--exclude=chaos_data.js' repo_original/presentation/index.html repo/presentation/index.html
+--- repo_original/presentation/index.html	2026-05-25 12:56:02.000000000 +0000
++++ repo/presentation/index.html	2026-05-25 13:35:46.516739742 +0000
+@@ -3,7 +3,7 @@
+   <head>
+     <meta charset="utf-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1" />
+-    <title>ChaosLab - Presentacion animada</title>
++    <title>ChaosLab - Presentación animada</title>
+     <link rel="stylesheet" href="style.css" />
+   </head>
+   <body>
+@@ -13,21 +13,25 @@
+         <div class="claim">
+           <p class="kicker">0:00 - Hook</p>
+           <h1>Mismas leyes, futuros distintos</h1>
+-          <p>Una diferencia inicial de <code>1e-6 rad</code> puede volverse macroscopica.</p>
++          <p>Dos simulaciones obedecen la misma EDO. Solo cambia <code>θ₂(0)</code> en <code>10⁻⁶ rad</code>.</p>
++          <div class="metric-row" aria-label="Métrica inicial de perturbación">
++            <span class="pill">perturbación microscópica</span>
++            <span class="pill accent">efecto macroscópico</span>
++          </div>
+         </div>
+-        <aside class="notes">Dos sistemas casi iguales se separan. La pregunta no es si las leyes fallan, sino por que amplifican diferencias pequenas.</aside>
++        <aside class="notes">Abrir con contraste visual: al principio las trayectorias parecen una sola, luego se separan. La pregunta no es si las leyes fallan, sino por qué una diferencia tan pequeña puede amplificarse.</aside>
+       </section>
+ 
+       <section class="slide" data-scene="simple">
+         <canvas class="scene-canvas" data-canvas="simple"></canvas>
+         <div class="claim right">
+-          <p class="kicker">0:25 - Fisica I base</p>
++          <p class="kicker">0:25 - Física I base</p>
+           <h2>Primero, el caso ordenado</h2>
+-          <p>El angulo se mide desde la vertical hacia abajo. Esa convencion tambien se usa en el pendulo doble.</p>
+-          <p class="equation">&omega; = d&theta; / dt</p>
+-          <p class="equation">sin(&theta;) &asymp; &theta; para |&theta;| &ll; 1</p>
++          <p>El ángulo se mide desde la vertical hacia abajo. Esa convención también se usa en el péndulo doble.</p>
++          <p class="equation">ω = dθ / dt</p>
++          <p class="equation">sin(θ) ≈ θ para |θ| ≪ 1</p>
+         </div>
+-        <aside class="notes">Esta escena ancla el proyecto en Fisica I y Calculo I: derivadas, oscilacion y aproximacion de angulo pequeno.</aside>
++        <aside class="notes">Esta escena ancla el proyecto en Física I: oscilaciones, gravedad, energía y rotación. El péndulo simple es el punto de partida familiar antes de mostrar el acoplamiento.</aside>
+       </section>
+ 
+       <section class="slide" data-scene="state">
+@@ -36,89 +40,96 @@
+           <p class="kicker">0:55 - Segunda masa</p>
+           <h2>Agregar una barra cambia el juego</h2>
+           <p>El estado pasa de una coordenada a cuatro variables acopladas.</p>
+-          <p class="state-vector">s(t) = [&theta;<sub>1</sub>, &omega;<sub>1</sub>, &theta;<sub>2</sub>, &omega;<sub>2</sub>]</p>
++          <p class="state-vector">s(t) = [θ<sub>1</sub>, ω<sub>1</sub>, θ<sub>2</sub>, ω<sub>2</sub>]</p>
+         </div>
+-        <aside class="notes">No cambiamos de leyes. Seguimos con gravedad, energia y rotacion, pero ahora los grados de libertad se acoplan.</aside>
++        <aside class="notes">No cambiamos de leyes. Seguimos con mecánica clásica: gravedad, energía y rotación. Lo nuevo es que el movimiento de una barra afecta el de la otra.</aside>
+       </section>
+ 
+       <section class="slide" data-scene="geometry">
+         <canvas class="scene-canvas" data-canvas="geometry"></canvas>
+         <div class="claim compact">
+-          <p class="kicker">1:20 - Modelo geometrico</p>
+-          <h2>De angulos a posiciones</h2>
+-          <p>Las coordenadas salen por trigonometria, no por dibujo libre.</p>
+-          <div class="formula-stack" aria-label="Coordenadas del pendulo doble">
+-            <p><span>x<sub>1</sub></span> = L<sub>1</sub> sin(&theta;<sub>1</sub>)</p>
+-            <p><span>y<sub>1</sub></span> = -L<sub>1</sub> cos(&theta;<sub>1</sub>)</p>
+-            <p><span>x<sub>2</sub></span> = x<sub>1</sub> + L<sub>2</sub> sin(&theta;<sub>2</sub>)</p>
+-            <p><span>y<sub>2</sub></span> = y<sub>1</sub> - L<sub>2</sub> cos(&theta;<sub>2</sub>)</p>
++          <p class="kicker">1:20 - Modelo geométrico</p>
++          <h2>De ángulos a posiciones</h2>
++          <p>Las coordenadas salen por trigonometría, no por dibujo libre.</p>
++          <div class="formula-stack" aria-label="Coordenadas del péndulo doble">
++            <p><span>x<sub>1</sub></span> = L<sub>1</sub> sin(θ<sub>1</sub>)</p>
++            <p><span>y<sub>1</sub></span> = -L<sub>1</sub> cos(θ<sub>1</sub>)</p>
++            <p><span>x<sub>2</sub></span> = x<sub>1</sub> + L<sub>2</sub> sin(θ<sub>2</sub>)</p>
++            <p><span>y<sub>2</sub></span> = y<sub>1</sub> - L<sub>2</sub> cos(θ<sub>2</sub>)</p>
+           </div>
+         </div>
+-        <aside class="notes">Esta es la escena puente: primero construimos la posicion de la primera masa, luego la segunda como desplazamiento relativo desde la primera.</aside>
++        <aside class="notes">Esta es la escena 3Blue1Brown: construir la posición paso a paso. Primero la masa 1 respecto al pivote; luego la masa 2 como desplazamiento relativo desde la masa 1.</aside>
+       </section>
+ 
+       <section class="slide" data-scene="simulation">
+         <canvas class="scene-canvas" data-canvas="simulation"></canvas>
+         <div class="claim compact">
+-          <p class="kicker">1:55 - Simulacion numerica</p>
++          <p class="kicker">1:55 - Simulación numérica</p>
+           <h2>Resolver, no dibujar a mano</h2>
+           <p><code>solve_ivp</code> integra el sistema como problema de valor inicial.</p>
+           <p class="equation">d s / dt = f(t, s)</p>
+         </div>
+-        <aside class="notes">Cada frame sale del modelo fisico. La animacion es visualizacion de una solucion numerica.</aside>
++        <aside class="notes">Cada frame sale del modelo físico. La animación no es una coreografía: es la visualización de una solución numérica reproducible.</aside>
+       </section>
+ 
+       <section class="slide" data-scene="energy">
+         <canvas class="scene-canvas" data-canvas="energy"></canvas>
+         <div class="claim compact">
+           <p class="kicker">2:30 - Control de calidad</p>
+-          <h2>La energia total casi no se mueve</h2>
+-          <p>Si el integrador inventara energia, no podriamos confiar en el caos observado.</p>
+-          <p class="equation">E(t) = T(t) + V(t) &asymp; constante</p>
++          <h2>La energía total casi no se mueve</h2>
++          <p>Si el integrador inventara energía, no podríamos confiar en la sensibilidad observada.</p>
++          <p class="equation">E(t) = T(t) + V(t) ≈ constante</p>
++          <div class="metric-row" aria-label="Deriva de energía">
++            <span class="pill">deriva relativa máx. ≈ 2.6×10⁻⁶</span>
++          </div>
+         </div>
+-        <aside class="notes">La energia total es el ancla de confianza. La divergencia no se debe a que el modelo viole la conservacion de energia.</aside>
++        <aside class="notes">La energía total es el ancla de confianza. La divergencia no se debe a que el modelo viole groseramente la conservación de energía.</aside>
+       </section>
+ 
+       <section class="slide" data-scene="divergence">
+         <canvas class="scene-canvas" data-canvas="divergence"></canvas>
+         <div class="claim right compact">
+           <p class="kicker">3:05 - Sensibilidad</p>
+-          <h2>&Delta;(t) crece</h2>
+-          <p>Medimos la separacion entre dos estados casi identicos en escala logaritmica.</p>
+-          <p class="equation long">&Delta;(t) = ||s(t) - s'(t)||</p>
++          <h2>Δ(t) crece</h2>
++          <p>Medimos la separación entre dos estados casi idénticos en escala logarítmica.</p>
++          <p class="equation long">Δ(t) = ||s(t) - s'(t)||</p>
++          <p class="caveat">No es un exponente de Lyapunov formal: es evidencia numérica de sensibilidad.</p>
+         </div>
+-        <aside class="notes">No lo llamamos exponente de Lyapunov formal. Es una evidencia cuantitativa de sensibilidad a condiciones iniciales.</aside>
++        <aside class="notes">Decir explícitamente que no estamos vendiendo una prueba formal de caos. Mostramos una medición de divergencia temprana compatible con sensibilidad a condiciones iniciales.</aside>
+       </section>
+ 
+       <section class="slide" data-scene="map">
+         <div class="map-stage">
+-          <img src="../figures/flip_time_fractal_map.png" alt="Mapa de condiciones iniciales del pendulo doble" />
++          <img class="map-reference" src="../figures/flip_time_fractal_map.png" alt="Mapa de condiciones iniciales del péndulo doble" />
++          <canvas class="scene-canvas map-canvas" data-canvas="map"></canvas>
+           <div class="map-scan"></div>
+         </div>
+         <div class="claim compact">
+-          <p class="kicker">3:45 - Observable finale</p>
++          <p class="kicker">3:45 - Mapa global</p>
+           <h2>Un mapa de futuros</h2>
+-          <p>Color = tiempo hasta el primer flip. Las fronteras revelan sensibilidad.</p>
++          <p>Cada pixel nace de resolver la misma EDO con una condición inicial distinta.</p>
++          <p class="caveat">Color = tiempo hasta el primer flip.</p>
+         </div>
+-        <aside class="notes">Este es el momento 2swap: una regla determinista local produce una imagen global compleja.</aside>
++        <aside class="notes">Este es el momento inspirado en 2swap/Observable. No presentar el mapa como imagen pegada: cada punto es un experimento computacional. La frontera irregular es el mensaje.</aside>
+       </section>
+ 
+       <section class="slide" data-scene="close">
+         <canvas class="scene-canvas" data-canvas="close"></canvas>
+         <div class="claim center">
+           <p class="kicker">4:35 - Cierre</p>
+-          <h2>Deterministico no significa predecible</h2>
+-          <p>La fisica da las reglas. La computacion revela sus consecuencias.</p>
+-          <p class="sources">Fisica I + Calculo I + EDOs + visualizacion cientifica</p>
++          <h2>Determinismo no significa predictibilidad práctica</h2>
++          <p>La física da las reglas. La computación revela sus consecuencias.</p>
++          <p class="sources">Física I + Cálculo I + EDOs + visualización científica</p>
++          <p class="caveat">Alcance honesto: sin rozamiento y sin Lyapunov formal; sí hay simulación reproducible, energía controlada, divergencia y mapa de condiciones iniciales.</p>
+         </div>
+-        <aside class="notes">Cerrar con limitaciones: sin rozamiento, mapa exploratorio, validacion por video como trabajo futuro.</aside>
++        <aside class="notes">Cerrar con la idea central y las limitaciones. Eso protege la defensa oral: no prometemos una prueba matemática completa; defendemos evidencia numérica clara.</aside>
+       </section>
+     </main>
+ 
+-    <nav class="chrome" aria-label="Controles de presentacion">
++    <nav class="chrome" aria-label="Controles de presentación">
+       <button id="prev" type="button" aria-label="Anterior">Anterior</button>
+       <div class="progress"><span id="progress-bar"></span></div>
+-      <output id="counter">1 / 8</output>
++      <output id="counter">1 / 9</output>
+       <button id="notes-toggle" type="button">Notas</button>
+       <button id="next" type="button" aria-label="Siguiente">Siguiente</button>
+     </nav>
+diff -ruN '--exclude=__pycache__' '--exclude=*.pyc' '--exclude=chaos_data.js' repo_original/presentation/script.js repo/presentation/script.js
+--- repo_original/presentation/script.js	2026-05-25 12:56:02.000000000 +0000
++++ repo/presentation/script.js	2026-05-25 13:36:34.758564720 +0000
+@@ -348,7 +348,129 @@
+   ctx.fillText("\u03b8\u0308\u2082 = g(\u03b8\u2081, \u03b8\u2082, \u03c9\u2081, \u03c9\u2082)", x, y + 82);
+   ctx.globalAlpha = pulse;
+   ctx.fillStyle = "oklch(72% 0.22 335)";
+-  ctx.fillText("terminos cruzados + senos/cosenos", x, y + 126);
++  ctx.fillText("términos cruzados + senos/cosenos", x, y + 126);
++  ctx.restore();
++}
++
++
++function flipColor(value, tMax) {
++  if (!Number.isFinite(value)) return "rgba(5, 7, 18, 0.92)";
++  const v = Math.max(0, Math.min(1, value / Math.max(tMax, 1e-9)));
++  if (v >= 0.995) return "rgba(2, 4, 13, 0.95)";
++  if (v < 0.18) return "rgba(50, 105, 232, 0.94)";
++  if (v < 0.36) return "rgba(38, 199, 229, 0.94)";
++  if (v < 0.56) return "rgba(80, 236, 142, 0.94)";
++  if (v < 0.74) return "rgba(236, 221, 72, 0.94)";
++  if (v < 0.90) return "rgba(250, 125, 38, 0.94)";
++  return "rgba(196, 29, 29, 0.94)";
++}
++
++function renderMap(ctx, elapsed, w, h) {
++  const payload = data.map || {};
++  ctx.save();
++  ctx.fillStyle = "rgba(2, 4, 13, 0.95)";
++  ctx.fillRect(0, 0, w, h);
++
++  const size = Math.min(w * 0.78, h * 0.78);
++  const x0 = (w - size) / 2;
++  const y0 = (h - size) / 2;
++  const rows = payload.flipTimes?.length || 0;
++  const cols = rows ? payload.flipTimes[0].length : 0;
++  const tMax = payload.tMax || 18;
++
++  ctx.strokeStyle = "oklch(31% 0.035 270)";
++  ctx.lineWidth = 1;
++  ctx.strokeRect(x0, y0, size, size);
++
++  if (!rows || !cols) {
++    ctx.fillStyle = "oklch(94% 0.01 90)";
++    ctx.font = "18px ui-monospace, monospace";
++    ctx.textAlign = "center";
++    ctx.fillText("mapa no cargado: ejecuta scripts/export_presentation_data.py", w / 2, h / 2);
++    ctx.restore();
++    return;
++  }
++
++  const cellW = size / cols;
++  const cellH = size / rows;
++  const progress = Math.min(1, elapsed / 4.4);
++  const revealCols = Math.max(1, Math.floor(cols * progress));
++
++  for (let r = 0; r < rows; r += 1) {
++    for (let c = 0; c < revealCols; c += 1) {
++      const value = payload.flipTimes[r][c];
++      ctx.fillStyle = flipColor(value, tMax);
++      ctx.fillRect(x0 + c * cellW, y0 + (rows - 1 - r) * cellH, Math.ceil(cellW) + 0.5, Math.ceil(cellH) + 0.5);
++    }
++  }
++
++  const scanX = x0 + revealCols * cellW;
++  ctx.save();
++  ctx.strokeStyle = "oklch(84% 0.16 85)";
++  ctx.globalAlpha = 0.8;
++  ctx.lineWidth = 2;
++  ctx.beginPath();
++  ctx.moveTo(scanX, y0);
++  ctx.lineTo(scanX, y0 + size);
++  ctx.stroke();
++  ctx.restore();
++
++  function mapTheta(theta1, theta2) {
++    return [x0 + ((theta1 + Math.PI) / (2 * Math.PI)) * size, y0 + size - ((theta2 + Math.PI) / (2 * Math.PI)) * size];
++  }
++
++  if (elapsed > 2.6) {
++    ctx.save();
++    ctx.strokeStyle = "rgba(255, 255, 255, 0.78)";
++    ctx.lineWidth = 1.8;
++    ctx.setLineDash([7, 6]);
++    [1, -1].forEach((branch) => {
++      ctx.beginPath();
++      let first = true;
++      for (let i = 0; i <= 220; i += 1) {
++        const th1 = -Math.PI + (2 * Math.PI * i) / 220;
++        const rhs = 2 - 3 * Math.cos(th1);
++        if (rhs < -1 || rhs > 1) {
++          first = true;
++          continue;
++        }
++        const th2 = branch * Math.acos(rhs);
++        const [px, py] = mapTheta(th1, th2);
++        if (first) {
++          ctx.moveTo(px, py);
++          first = false;
++        } else {
++          ctx.lineTo(px, py);
++        }
++      }
++      ctx.stroke();
++    });
++    ctx.setLineDash([]);
++    ctx.fillStyle = "rgba(255, 255, 255, 0.82)";
++    ctx.font = "13px ui-monospace, monospace";
++    ctx.textAlign = "left";
++    ctx.fillText("frontera energética", x0 + 16, y0 + 24);
++    ctx.restore();
++  }
++
++  ctx.fillStyle = "oklch(73% 0.025 275)";
++  ctx.font = "14px ui-monospace, monospace";
++  ctx.textAlign = "center";
++  ctx.fillText("θ₁(0) [rad]", x0 + size / 2, y0 + size + 34);
++  ctx.save();
++  ctx.translate(x0 - 34, y0 + size / 2);
++  ctx.rotate(-Math.PI / 2);
++  ctx.fillText("θ₂(0) [rad]", 0, 0);
++  ctx.restore();
++
++  const resolved = revealCols * rows;
++  ctx.textAlign = "right";
++  ctx.fillStyle = "oklch(94% 0.01 90)";
++  ctx.font = "15px ui-monospace, monospace";
++  ctx.fillText(`${resolved.toLocaleString("es-CO")} condiciones iniciales resueltas`, x0 + size, y0 - 18);
++  ctx.textAlign = "left";
++  ctx.fillStyle = "oklch(84% 0.16 85)";
++  ctx.fillText("un pixel = una integración", x0, y0 - 18);
+   ctx.restore();
+ }
+ 
+@@ -419,7 +541,7 @@
+         { y: data.energy.potential, color: "oklch(72% 0.22 335)" },
+         { y: data.energy.total, color: "oklch(84% 0.16 85)", width: 3 },
+       ],
+-      ["cinetica", "potencial", "total"],
++      ["cinética", "potencial", "total"],
+       elapsed,
+       w,
+       h,
+@@ -448,7 +570,7 @@
+     drawChart(
+       ctx,
+       [{ y: data.divergence.delta, color: "oklch(78% 0.18 145)", width: 3 }],
+-      ["Delta(t), escala log"],
++      ["Δ(t), escala log"],
+       elapsed,
+       w,
+       h,
+@@ -458,6 +580,10 @@
+     );
+   }
+ 
++  if (name === "map") {
++    renderMap(ctx, elapsed, w, h);
++  }
++
+   if (name === "close") {
+     const cx = w * 0.5;
+     const cy = h * 0.46;
+diff -ruN '--exclude=__pycache__' '--exclude=*.pyc' '--exclude=chaos_data.js' repo_original/presentation/style.css repo/presentation/style.css
+--- repo_original/presentation/style.css	2026-05-25 12:56:02.000000000 +0000
++++ repo/presentation/style.css	2026-05-25 13:36:05.273015592 +0000
+@@ -210,29 +210,85 @@
+   color: var(--green);
+ }
+ 
++.metric-row {
++  margin-top: 18px;
++  display: flex;
++  flex-wrap: wrap;
++  gap: 10px;
++  align-items: center;
++}
++
++.claim.right .metric-row {
++  justify-content: flex-end;
++}
++
++.pill {
++  display: inline-flex;
++  align-items: center;
++  min-height: 30px;
++  border: 1px solid oklch(31% 0.035 270 / 0.9);
++  border-radius: 999px;
++  background: oklch(13% 0.02 260 / 0.78);
++  color: var(--text);
++  padding: 6px 12px;
++  font-size: clamp(13px, 1.05vw, 16px);
++  font-weight: 650;
++}
++
++.pill.accent {
++  border-color: oklch(82% 0.16 205 / 0.55);
++  box-shadow: 0 0 18px oklch(82% 0.16 205 / 0.16);
++}
++
++.caveat {
++  max-width: 46ch;
++  color: var(--gold);
++  font-size: clamp(15px, 1.35vw, 19px);
++  line-height: 1.4;
++}
++
++.slide[data-scene="close"] .caveat {
++  margin-inline: auto;
++  max-width: 72ch;
++}
++
+ .map-stage {
+   position: absolute;
+   inset: clamp(42px, 7vw, 92px) clamp(24px, 4vw, 72px) clamp(80px, 10vw, 124px) clamp(430px, 38vw, 610px);
+   display: grid;
+   place-items: center;
+   overflow: hidden;
++  border: 1px solid oklch(31% 0.035 270 / 0.85);
++  border-radius: 20px;
++  background: oklch(5% 0.012 260 / 0.88);
++  box-shadow: 0 24px 120px oklch(2% 0.01 260 / 0.55);
+ }
+ 
+-.map-stage img {
+-  width: min(62vw, 900px);
+-  max-height: 78vh;
++.map-reference {
++  position: absolute;
++  z-index: 1;
++  width: 100%;
++  height: 100%;
+   object-fit: contain;
+-  filter: saturate(1.08) contrast(1.02);
++  opacity: 0.26;
++  filter: saturate(1.12) contrast(1.05);
+   animation: map-breathe 12s var(--ease) infinite alternate;
+ }
+ 
++.map-stage .map-canvas {
++  z-index: 2;
++}
++
+ .map-scan {
+   position: absolute;
++  z-index: 3;
+   width: 2px;
+-  height: 76%;
++  height: 82%;
+   background: var(--gold);
+   box-shadow: 0 0 24px var(--gold);
+   animation: scan 5s var(--ease) infinite alternate;
++  opacity: 0.74;
++  pointer-events: none;
+ }
+ 
+ .chrome {
+diff -ruN '--exclude=__pycache__' '--exclude=*.pyc' '--exclude=chaos_data.js' repo_original/scripts/export_presentation_data.py repo/scripts/export_presentation_data.py
+--- repo_original/scripts/export_presentation_data.py	2026-05-25 12:56:02.000000000 +0000
++++ repo/scripts/export_presentation_data.py	2026-05-25 13:35:46.516302364 +0000
+@@ -16,6 +16,35 @@
+     return np.round(np.asarray(values, dtype=float), decimals).tolist()
+ 
+ 
++def _load_map_payload(target_resolution: int = 60) -> dict[str, object]:
++    """Load a coarse version of the precomputed flip-time map for the HTML deck.
++
++    The full map stays as a high-resolution figure. This coarse payload lets the
++    presentation build the map progressively, making clear that every pixel comes
++    from an initial-value simulation rather than from a pasted texture.
++    """
++    map_path = ROOT / "data" / "flip_time_map_120.npz"
++    if not map_path.exists():
++        return {}
++
++    archive = np.load(map_path)
++    theta1 = np.asarray(archive["theta1"], dtype=float)
++    theta2 = np.asarray(archive["theta2"], dtype=float)
++    flip_times = np.asarray(archive["flip_times"], dtype=float)
++    step = max(1, int(np.ceil(flip_times.shape[0] / target_resolution)))
++
++    theta1_small = theta1[::step]
++    theta2_small = theta2[::step]
++    flip_small = flip_times[::step, ::step]
++    return {
++        "theta1": _round_list(theta1_small, 4),
++        "theta2": _round_list(theta2_small, 4),
++        "flipTimes": _round_list(flip_small, 3),
++        "tMax": float(np.max(flip_times)),
++        "resolution": int(flip_small.shape[0]),
++    }
++
++
+ def main() -> None:
+     out_dir = ROOT / "presentation" / "data"
+     out_dir.mkdir(parents=True, exist_ok=True)
+@@ -68,6 +97,7 @@
+             "delta": _round_list(delta, 10),
+         },
+         "simple": simple,
++        "map": _load_map_payload(),
+     }
+ 
+     js = "window.CHAOS_DATA = " + json.dumps(data, separators=(",", ":")) + ";\n"
+diff -ruN '--exclude=__pycache__' '--exclude=*.pyc' '--exclude=chaos_data.js' repo_original/scripts/smoke_test.py repo/scripts/smoke_test.py
+--- repo_original/scripts/smoke_test.py	2026-05-25 12:56:02.000000000 +0000
++++ repo/scripts/smoke_test.py	2026-05-25 13:36:59.612994700 +0000
+@@ -43,10 +43,22 @@
+         ROOT / "figures" / "divergence_semilog.png",
+         ROOT / "figures" / "flip_time_fractal_map.png",
+         ROOT / "animations" / "double_pendulum.gif",
++        ROOT / "presentation" / "index.html",
++        ROOT / "presentation" / "script.js",
++        ROOT / "presentation" / "style.css",
++        ROOT / "presentation" / "data" / "chaos_data.js",
+     ]
+     missing = [str(p) for p in required if not p.exists()]
+     assert not missing, "Missing generated assets: " + ", ".join(missing)
+ 
++    deck = (ROOT / "presentation" / "index.html").read_text(encoding="utf-8")
++    script = (ROOT / "presentation" / "script.js").read_text(encoding="utf-8")
++    data_js = (ROOT / "presentation" / "data" / "chaos_data.js").read_text(encoding="utf-8")
++    assert "Lyapunov formal" in deck, "Presentation must avoid overclaiming formal chaos proof"
++    assert "Cada pixel" in deck, "Map slide must explain how the global map is produced"
++    assert "renderMap" in script, "Presentation script must render the progressive map"
++    assert '"map"' in data_js and '"flipTimes"' in data_js, "Presentation data must include a coarse map payload"
++
+     print("ChaosLab smoke test passed")
+     print(f"energy_relative_drift={rel_drift:.3e}")
+     print(f"log_delta_slope={slope:.3g} 1/s")
+diff -ruN '--exclude=__pycache__' '--exclude=*.pyc' '--exclude=chaos_data.js' repo_original/slides/guion_5_min.md repo/slides/guion_5_min.md
+--- repo_original/slides/guion_5_min.md	2026-05-25 12:56:02.000000000 +0000
++++ repo/slides/guion_5_min.md	2026-05-25 13:37:46.378297412 +0000
+@@ -1,53 +1,69 @@
+-# Guion de 5 minutos - ChaosLab
++# Guion final de 5 minutos — ChaosLab
+ 
+-## 0:00-0:25 - Hook
++## 0:00–0:25 — Hook: mismas leyes, futuros distintos
+ 
+-Miren estos dos pendulos. A simple vista empiezan igual. Obedecen las mismas leyes, tienen las mismas masas y longitudes, y la diferencia inicial es de apenas `1e-6 rad`. Eso es invisible para nosotros. Sin embargo, despues de unos segundos, sus futuros se separan.
++Miren estas dos simulaciones. Tienen las mismas masas, las mismas longitudes y obedecen exactamente la misma ecuación diferencial. La única diferencia es que en una de ellas cambié el ángulo inicial de la segunda barra en `10⁻⁶ rad`, una perturbación demasiado pequeña para verla en la pantalla.
+ 
+-La pregunta del proyecto es: **si las leyes son deterministas, por que el futuro deja de ser predecible?**
++Durante unos segundos parecen el mismo sistema. Luego dejan de estar de acuerdo. El proyecto nace de esa tensión: **si la mecánica clásica es determinista, ¿por qué el futuro puede volverse prácticamente impredecible?**
+ 
+-## 0:25-0:55 - Fisica I base
++## 0:25–0:55 — Física I base: el péndulo simple
+ 
+-Partimos del pendulo simple, un sistema clasico de Fisica I. Su posicion se describe con un angulo `theta`. La velocidad angular es `d theta / dt` y la aceleracion angular es `d^2 theta / dt^2`. Para angulos pequenos usamos `sin(theta) ~= theta`, y por eso aparece un movimiento casi periodico.
++Partimos del caso ordenado de Física I: el péndulo simple. Su posición se describe con un ángulo `θ` medido desde la vertical. La velocidad angular es `ω = dθ/dt`; para oscilaciones pequeñas usamos `sin(θ) ≈ θ`, y aparece un movimiento casi periódico.
+ 
+-Ese es el caso ordenado: energia potencial se transforma en energia cinetica y luego vuelve.
++Ese caso nos da el vocabulario: posición angular, velocidad angular, energía potencial gravitacional y energía cinética.
+ 
+-## 0:55-1:25 - Agregar una segunda masa
++## 0:55–1:20 — Segunda masa: cuatro variables acopladas
+ 
+-Ahora agregamos una segunda masa. El estado ya no es solo un angulo: es `[theta1, omega1, theta2, omega2]`. El movimiento de una barra afecta a la otra. Las ecuaciones quedan acopladas y aparecen terminos no lineales.
++Al agregar una segunda barra, el estado ya no es solo un ángulo. Ahora es
+ 
+-No cambiamos de universo fisico. Seguimos usando gravedad, energia y movimiento rotacional. Solo aumentamos el numero de grados de libertad.
++`s(t) = [θ₁, ω₁, θ₂, ω₂]`.
+ 
+-## 1:25-2:05 - Simulacion numerica
++No cambiamos de leyes. Seguimos usando gravedad, energía y rotación. Lo que cambia es que el movimiento de una barra afecta el movimiento de la otra. Ese acoplamiento es el origen de la complejidad.
+ 
+-Como las ecuaciones del pendulo doble no tienen una solucion analitica simple para condiciones generales, resolvemos el sistema numericamente. En Python usamos `solve_ivp`, que integra problemas de valor inicial para sistemas de ecuaciones diferenciales.
++## 1:20–1:55 — Modelo geométrico: de ángulos a coordenadas
+ 
+-La simulacion recibe una condicion inicial, calcula velocidades y aceleraciones, y avanza en el tiempo. El resultado no es una animacion inventada: cada punto sale de integrar el modelo fisico.
++Para simular no basta con dibujar dos líneas bonitas, aunque sería cómodo y profundamente irresponsable. Primero convertimos ángulos en posiciones:
+ 
+-## 2:05-2:45 - Energia como prueba de calidad
++`x₁ = L₁ sin(θ₁)`, `y₁ = -L₁ cos(θ₁)`.
+ 
+-Antes de hablar de caos, hay que comprobar que el modelo no esta fallando. Por eso calculamos energia cinetica, potencial y total.
++Luego la segunda masa se calcula desde la primera:
+ 
+-La cinetica y la potencial suben y bajan, pero la energia total permanece casi constante. Esa es la prueba clave: la divergencia no aparece porque el integrador este creando energia de la nada. Aparece porque el sistema es no lineal.
++`x₂ = x₁ + L₂ sin(θ₂)`, `y₂ = y₁ - L₂ cos(θ₂)`.
+ 
+-## 2:45-3:35 - Sensibilidad inicial
++Esto conecta la animación con el modelo físico. Cada punto que aparece en pantalla sale de estas coordenadas.
+ 
+-Ahora corremos dos simulaciones. La segunda solo cambia `theta2(0)` en `1e-6 rad`. Medimos la distancia entre ambos estados con `Delta(t)`.
++## 1:55–2:30 — Simulación numérica: resolver, no coreografiar
+ 
+-En escala logaritmica, la distancia crece rapidamente durante la ventana inicial. No estamos afirmando un exponente de Lyapunov formal; estamos mostrando una evidencia cuantitativa de sensibilidad a condiciones iniciales.
++Las ecuaciones del péndulo doble son acopladas y no tienen una solución analítica simple para condiciones generales. Por eso las resolvemos numéricamente como un problema de valor inicial:
+ 
+-La frase central es esta: **la perdida de predictibilidad no aparece por falta de leyes, sino porque las leyes amplifican diferencias pequenas.**
++`ds/dt = f(t, s)`.
+ 
+-## 3:35-4:35 - Mapa de condiciones iniciales
++En el repositorio usamos `solve_ivp`. La simulación recibe una condición inicial, calcula aceleraciones y velocidades, y avanza en el tiempo. La animación no está inventada cuadro por cuadro; es una visualización de la solución numérica.
+ 
+-Ahora convertimos una simulacion en miles. Cada pixel del mapa es un experimento: escogemos `theta1(0)` y `theta2(0)`, soltamos el pendulo y medimos cuanto tarda en hacer el primer flip.
++## 2:30–3:05 — Energía: control de calidad numérica
+ 
+-Las zonas oscuras no hacen flip dentro de la ventana simulada. Las regiones de color hacen flip en distintos tiempos. Lo importante son las fronteras: pequenas variaciones en el punto inicial pueden cambiar completamente el resultado.
++Antes de hablar de caos, hay que verificar que el integrador no esté haciendo magia negra, que es una tradición humana lamentablemente común. Calculamos energía cinética, potencial y total.
+ 
+-Este es el momento 2swap del proyecto: una regla local sencilla produce una imagen global compleja.
++La cinética y la potencial se intercambian, pero la energía total permanece casi constante. En esta corrida, la deriva relativa máxima está alrededor de `2.6×10⁻⁶`. Eso no prueba caos, pero sí nos dice que la simulación es confiable para analizar el comportamiento observado.
+ 
+-## 4:35-5:00 - Cierre
++## 3:05–3:45 — Sensibilidad: una diferencia microscópica crece
+ 
+-ChaosLab muestra que un sistema clasico puede ser determinista y, aun asi, dificil de predecir en la practica. La fisica da las reglas; la computacion nos deja ver sus consecuencias.
++Ahora corremos dos simulaciones casi idénticas y medimos
+ 
+-Como trabajo futuro, se puede agregar validacion experimental con video tracking, comparar integradores o entrenar un modelo surrogate que clasifique regiones de estabilidad. Pero el nucleo ya esta: mecanica clasica, calculo, energia, ecuaciones diferenciales y visualizacion.
++`Δ(t) = ||s(t) - s'(t)||`.
++
++En escala logarítmica, `Δ(t)` crece rápidamente durante la ventana inicial. Esta pendiente es un indicador útil de sensibilidad, pero hay que decirlo bien: **no estamos calculando un exponente de Lyapunov formal**. Estamos mostrando evidencia numérica de sensibilidad a condiciones iniciales.
++
++La frase central es: la pérdida de predictibilidad no aparece porque falten leyes; aparece porque las leyes amplifican diferencias pequeñas.
++
++## 3:45–4:35 — Mapa global: cada pixel es un experimento
++
++Ahora pasamos de una simulación a miles. Cada pixel del mapa representa una condición inicial: en el eje horizontal está `θ₁(0)` y en el eje vertical está `θ₂(0)`. Para cada punto resolvemos la misma EDO y medimos cuánto tarda en ocurrir el primer flip.
++
++El color codifica ese tiempo. Las zonas oscuras no hacen flip dentro de la ventana simulada. Las regiones de color hacen flip en distintos tiempos. Lo importante no es solo que el mapa sea bonito, porque el universo no necesita otro salvapantallas; lo importante es la frontera irregular: puntos iniciales muy cercanos pueden producir futuros muy distintos.
++
++## 4:35–5:00 — Cierre: determinismo no es predictibilidad práctica
++
++ChaosLab muestra que un sistema de mecánica clásica puede ser determinista y aun así difícil de predecir en la práctica. Las reglas son fijas; lo complicado es que pequeñas incertidumbres iniciales pueden crecer hasta cambiar el resultado observable.
++
++El alcance es honesto: sin rozamiento, sin medición experimental directa y sin exponente de Lyapunov formal. Pero el núcleo está completo: modelo físico, integración reproducible, conservación de energía como control, divergencia entre trayectorias y mapa de condiciones iniciales.
+diff -ruN '--exclude=__pycache__' '--exclude=*.pyc' '--exclude=chaos_data.js' repo_original/src/chaoslab/physics.py repo/src/chaoslab/physics.py
+--- repo_original/src/chaoslab/physics.py	2026-05-25 12:56:02.000000000 +0000
++++ repo/src/chaoslab/physics.py	2026-05-25 13:35:46.515810960 +0000
+@@ -26,9 +26,8 @@
+     """Right-hand side of the double-pendulum ODE.
+ 
+     This is the standard point-mass double pendulum model. It is sufficient for
+-    the project because the objective is not an industrial-grade pendulum, but a
+-    reproducible demonstration of nonlinear mechanics and sensitivity to initial
+-    conditions. Humanity survives another approximation.
++    the project because the objective is a reproducible demonstration of nonlinear
++    mechanics and sensitivity to initial conditions.
+     """
+     th1, w1, th2, w2 = y
+     m1, m2, L1, L2, g = p.m1, p.m2, p.L1, p.L2, p.g
+@@ -130,7 +129,7 @@
+     """Crude estimate of the early-time slope of log(delta(t)).
+ 
+     It is not a formal Lyapunov exponent. It is a presentation-safe quantitative
+-    indicator of sensitivity, which is a polite way of not overclaiming.
++    indicator of sensitivity to initial conditions.
+     """
+     t = np.asarray(t)
+     delta = np.asarray(delta)
