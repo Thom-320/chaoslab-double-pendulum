@@ -1,41 +1,33 @@
 /*
-  ChaosLab — Cinematic Presentation
-  Register: Brand (scientific visualization, the data IS the product)
-  Scene sentence: A student presents in a dim lecture hall, guiding evaluators
-  through a physics mini-documentary where equations become motion and motion
-  becomes a fractal map. Deep indigo darkness, gold math, cyan trajectories.
+  ChaosLab — Redesigned Presentation
+  
+  Scene sentence: A physics student presents a mini-documentary in a dim
+  lecture hall. The data IS the spectacle. Deep indigo darkness, gold math,
+  cyan trajectories. No scaffolding, no badges, no cards. Just physics.
 
-  Fonts: Spectral (Display), Public Sans (UI), Fira Code (Math)
-  Color strategy: Committed dark mode, OKLCH
-  Motion: ease-out-expo, no bounce/elastic
+  Fonts: Spectral (Display), Public Sans (Body), Fira Code (Math only)
+  Color: Committed dark mode, OKLCH
+  Motion: ease-out-expo, no bounce
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&family=Spectral:ital,wght@0,400;0,600;0,800;1,400;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Public+Sans:wght@400;500;600&family=Spectral:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
 
 :root {
   color-scheme: dark;
-
   --bg: oklch(12% 0.025 285);
   --surface: oklch(18% 0.035 285);
-  --surface-2: oklch(24% 0.04 285);
-
-  --text: oklch(95% 0.015 285);
-  --muted: oklch(75% 0.03 285);
-
+  --text: oklch(93% 0.012 285);
+  --muted: oklch(68% 0.025 285);
   --gold: oklch(80% 0.15 80);
   --cyan: oklch(85% 0.14 200);
   --magenta: oklch(72% 0.18 335);
   --green: oklch(78% 0.15 145);
-  --red: oklch(75% 0.18 20);
-
-  --line: oklch(28% 0.04 285);
-  --line-soft: oklch(20% 0.025 285);
-
+  --red: oklch(72% 0.16 25);
+  --line: oklch(24% 0.03 285);
   --ease: cubic-bezier(0.19, 1, 0.22, 1);
-
   --font-display: 'Spectral', Georgia, serif;
-  --font-ui: 'Public Sans', system-ui, sans-serif;
-  --font-mono: 'Fira Code', 'SF Mono', monospace;
+  --font-body: 'Public Sans', system-ui, sans-serif;
+  --font-math: 'Fira Code', 'SF Mono', monospace;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,20 +37,20 @@ html, body {
   overflow: hidden;
   background: var(--bg);
   color: var(--text);
-  font-family: var(--font-ui);
-  line-height: 1.6;
+  font-family: var(--font-body);
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
 }
 
 body { isolation: isolate; }
 
-/* Ambient radial glow — two soft ellipses, no grid overlay */
+/* Ambient glow — two soft ellipses, barely there */
 body::before {
   content: "";
   position: fixed; inset: 0; z-index: -2;
   background:
-    radial-gradient(ellipse 70% 55% at 18% 35%, oklch(18% 0.06 285 / 0.45), transparent),
-    radial-gradient(ellipse 55% 45% at 82% 78%, oklch(16% 0.07 200 / 0.15), transparent),
+    radial-gradient(ellipse 60% 50% at 20% 40%, oklch(16% 0.04 285 / 0.35), transparent),
+    radial-gradient(ellipse 50% 40% at 80% 75%, oklch(14% 0.05 210 / 0.12), transparent),
     var(--bg);
 }
 
@@ -68,141 +60,132 @@ body::before {
 .slide {
   position: absolute; inset: 0;
   display: grid;
-  padding: clamp(2.5rem, 5vw, 6rem);
+  padding: clamp(3rem, 6vw, 7rem);
   padding-bottom: clamp(5rem, 8vw, 8rem);
   opacity: 0;
-  transform: translateY(32px);
+  transform: scale(0.97);
   pointer-events: none;
-  transition: opacity 750ms var(--ease), transform 750ms var(--ease);
+  transition: opacity 600ms var(--ease), transform 600ms var(--ease);
   will-change: opacity, transform;
 }
 
 .slide.is-active {
   opacity: 1;
-  transform: translateY(0);
+  transform: scale(1);
   pointer-events: auto;
-  transition-delay: 80ms;
+  transition-delay: 60ms;
 }
 
-/* ── Canvas ── */
+/* ── Canvas — the hero ── */
 .scene-canvas {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   z-index: 0;
-  opacity: 0.85;
-  mix-blend-mode: screen;
 }
 
 /* ── Typography ── */
 h1, h2 {
   font-family: var(--font-display);
   color: var(--text);
-  line-height: 1.05;
+  line-height: 1.08;
   margin: 0;
-  letter-spacing: -0.01em;
-  font-weight: 400;
+  letter-spacing: -0.02em;
+  font-weight: 600;
 }
 
 h1 {
-  font-size: clamp(3.5rem, 8vw, 7rem);
-  max-width: 12ch;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  max-width: 14ch;
 }
 
 h2 {
-  font-size: clamp(2.5rem, 6vw, 5rem);
-  max-width: 14ch;
+  font-size: clamp(2.2rem, 5.5vw, 4rem);
+  max-width: 16ch;
 }
 
 p {
   color: var(--muted);
-  font-size: clamp(1.125rem, 1.8vw, 1.6rem);
-  max-width: 55ch;
-  margin: 1.5rem 0 0;
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  max-width: 50ch;
+  margin: 1.2rem 0 0;
+  line-height: 1.7;
 }
 
-.kicker {
-  font-family: var(--font-mono);
-  color: var(--cyan);
-  font-size: clamp(0.875rem, 1.2vw, 1rem);
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  margin: 0 0 1.5rem;
-  opacity: 0.9;
-}
-
-/* Math */
+/* Math — Fira Code, gold, the only monospace */
 code, .state-vector, .equation, .formula-stack p {
-  font-family: var(--font-mono);
+  font-family: var(--font-math);
   color: var(--gold);
 }
 
 code {
-  font-size: 0.92em;
-  padding: 0.12em 0.3em;
+  font-size: 0.9em;
+  padding: 0.1em 0.25em;
   background: oklch(80% 0.15 80 / 0.06);
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 .state-vector {
-  font-size: clamp(1.25rem, 2vw, 2rem);
+  font-size: clamp(1.4rem, 2.2vw, 2.2rem);
   display: block;
-  margin-top: 1.5rem;
+  margin-top: 1.8rem;
 }
 
 .equation {
-  font-size: clamp(1.2rem, 1.8vw, 1.6rem);
+  font-size: clamp(1.3rem, 2vw, 1.8rem);
   display: block;
   margin-top: 1rem;
 }
 
-.equation.long {
-  font-size: clamp(1rem, 1.5vw, 1.3rem);
+.equation.dim {
+  color: var(--muted);
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
 }
 
-sub { font-size: 0.6em; vertical-align: sub; }
+sub { font-size: 0.65em; vertical-align: sub; }
 
 .formula-stack {
   margin-top: 2rem;
   display: grid;
-  gap: 0.75rem;
+  gap: 0.6rem;
 }
 .formula-stack p {
   margin: 0;
   font-size: clamp(1.1rem, 1.5vw, 1.4rem);
 }
-.formula-stack span { color: var(--text); }
+.formula-stack span { color: var(--text); font-family: var(--font-body); }
 
-/* Caveat — no side-stripe, full border box */
+/* Caveat — subtle inline footnote, NO bordered box */
 .caveat {
-  font-family: var(--font-ui);
-  font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: clamp(0.85rem, 1.1vw, 1rem);
   color: var(--gold);
-  display: inline-block;
-  padding: 0.75rem 1rem;
-  border: 1px solid oklch(80% 0.15 80 / 0.3);
-  border-radius: 4px;
-  background: oklch(80% 0.15 80 / 0.05);
-  font-style: normal;
+  opacity: 0.8;
   margin-top: 1.5rem;
-  max-width: 48ch;
+  max-width: 42ch;
+  line-height: 1.6;
 }
 
 .sources {
   color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: 0.9rem;
-  margin-top: 2rem;
-  opacity: 0.7;
+  font-size: 0.85rem;
+  margin-top: 1.5rem;
+  opacity: 0.5;
 }
 
-/* ── Claim layout ── */
+/* ── Claim layout — text floating over canvas ── */
 .claim {
   position: relative;
   z-index: 2;
   align-self: end;
   justify-self: start;
-  max-width: 45vw;
+  max-width: 44vw;
+  padding: 2rem 2.5rem;
+  background: oklch(12% 0.025 285 / 0.6);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border-radius: 6px;
 }
 
 .claim.right {
@@ -221,139 +204,109 @@ sub { font-size: 0.6em; vertical-align: sub; }
   margin-right: auto;
 }
 
-.claim.compact { max-width: 35vw; }
+.claim.compact { max-width: 32vw; }
 
-/* ── Pills ── */
-.metric-row {
-  margin-top: 2rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-.claim.right .metric-row { justify-content: flex-end; }
-
-.pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  color: var(--text);
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  border-radius: 4px;
-}
-.pill.accent {
-  background: oklch(75% 0.18 20 / 0.1);
-  border-color: var(--red);
-  color: var(--red);
-}
+/* ── KILLED: kickers, pills ── */
+.kicker { display: none; }
+.pill, .metric-row { display: none; }
 
 /* ── Map scene ── */
 .slide[data-scene="map"] .claim,
 .slide[data-scene="islands"] .claim {
   align-self: center;
-  max-width: 25vw;
+  max-width: 24vw;
 }
 
 .slide[data-scene="map"] h2,
 .slide[data-scene="islands"] h2 {
-  font-size: clamp(2rem, 5vw, 4.5rem);
+  font-size: clamp(1.8rem, 4.5vw, 3.5rem);
 }
 
 .map-stage {
   position: absolute;
-  inset: clamp(2rem, 5vw, 6rem) clamp(2rem, 5vw, 6rem) clamp(6rem, 8vw, 10rem) 35vw;
-  border: 1px solid var(--line);
+  inset: clamp(2rem, 4vw, 5rem) clamp(2rem, 4vw, 5rem) clamp(5rem, 7vw, 8rem) 32vw;
   background: var(--bg);
-  box-shadow: 0 40px 100px oklch(5% 0.05 285 / 0.6);
   display: grid;
   place-items: center;
   overflow: hidden;
 }
 
-.map-scan {
-  display: none; /* Canvas renders its own synced scan line */
-}
+.map-scan { display: none; }
 
-/* ── Periodic orbits ── */
-.mini-sims-grid {
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  align-items: center;
+/* ── Periodic orbits — NO cards, just canvases ── */
+.orbit-trio {
+  position: absolute;
+  bottom: clamp(6rem, 10vw, 10rem);
+  left: clamp(3rem, 6vw, 7rem);
+  right: clamp(3rem, 6vw, 7rem);
   z-index: 2;
-  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
 }
 
-.mini-sim-container {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  box-shadow: 0 20px 60px oklch(5% 0.05 285 / 0.5);
+.orbit-cell {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.8rem;
 }
 
-.mini-sim-canvas {
-  width: 240px;
-  height: 140px;
-  background: var(--bg);
-  border: 1px solid var(--line);
+.orbit-canvas {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background: transparent;
 }
 
-.mini-sim-label {
-  margin: 1rem 0 0;
-  font-family: var(--font-mono);
+.orbit-name {
+  font-family: var(--font-body);
   font-size: 0.85rem;
-  color: var(--text);
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.04em;
 }
+
+/* Legacy selectors for backward compat */
+.mini-sims-grid { display: none; }
 
 /* ── Zoom ── */
 .zoom-container {
-  margin-top: 2rem;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  padding: 0.5rem;
-  box-shadow: 0 20px 60px oklch(5% 0.05 285 / 0.5);
+  margin-top: 1.5rem;
   border-radius: 4px;
+  overflow: hidden;
 }
 .zoom-gif {
   width: 100%;
-  max-width: 400px;
-  border-radius: 2px;
+  max-width: 360px;
+  display: block;
 }
 
-/* ── Chrome ── */
+/* ── Chrome — nearly invisible ── */
 .chrome {
   position: fixed;
-  left: clamp(2rem, 5vw, 6rem);
-  right: clamp(2rem, 5vw, 6rem);
-  bottom: 2rem;
+  left: clamp(3rem, 6vw, 7rem);
+  right: clamp(3rem, 6vw, 7rem);
+  bottom: 1.5rem;
   z-index: 10;
   display: grid;
   grid-template-columns: auto 1fr auto auto auto;
-  gap: 1.5rem;
+  gap: 1.2rem;
   align-items: center;
 }
 
 button {
   background: transparent;
-  border: 1px solid var(--line);
-  color: var(--text);
-  font-family: var(--font-ui);
+  border: none;
+  color: var(--muted);
+  font-family: var(--font-body);
   font-weight: 500;
-  font-size: 0.9rem;
-  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  padding: 0.4rem 0.6rem;
   cursor: pointer;
-  transition: all 400ms var(--ease);
-  border-radius: 3px;
+  transition: color 400ms var(--ease);
 }
 button:hover, button:focus-visible {
-  border-color: var(--text);
-  background: var(--surface);
+  color: var(--text);
   outline: none;
 }
 
@@ -366,43 +319,38 @@ button:hover, button:focus-visible {
   position: absolute;
   left: 0; top: -0.5px;
   height: 2px;
-  width: 12.5%;
-  background: linear-gradient(90deg, var(--cyan), var(--gold));
+  width: 8.33%;
+  background: var(--cyan);
   transition: width 600ms var(--ease);
   border-radius: 1px;
 }
 
 #counter {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   min-width: 3ch;
+  opacity: 0.6;
 }
 
 /* ── Notes ── */
 .notes { display: none; }
 .notes-panel {
   position: fixed;
-  bottom: 4.5rem;
-  left: clamp(2rem, 5vw, 6rem);
-  right: clamp(2rem, 5vw, 6rem);
+  bottom: 3.5rem;
+  left: clamp(3rem, 6vw, 7rem);
+  right: clamp(3rem, 6vw, 7rem);
   z-index: 9;
-  background: oklch(10% 0.02 285 / 0.92);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--line);
+  background: oklch(10% 0.02 285 / 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: 4px;
-  padding: 1.2rem 1.5rem;
+  padding: 1rem 1.5rem;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   line-height: 1.6;
-  max-height: 18vh;
+  max-height: 16vh;
   overflow-y: auto;
-}
-
-/* ── Keyframes ── */
-@keyframes scan {
-  from { transform: translateX(-30vw); }
-  to { transform: translateX(30vw); }
 }
 
 /* ── Responsive ── */
@@ -414,13 +362,13 @@ button:hover, button:focus-visible {
     text-align: left;
     justify-self: start;
     align-self: end;
-    padding-bottom: 6rem;
+    padding-bottom: 5rem;
   }
   .claim.right p, .claim.right .caveat { margin-left: 0; }
   .map-stage { inset: 2rem 2rem 50vh 2rem; }
   .chrome { grid-template-columns: auto 1fr auto; }
   #notes-toggle { display: none; }
-  .mini-sims-grid { flex-direction: column; }
+  .orbit-trio { grid-template-columns: 1fr; bottom: auto; top: 55vh; }
 }
 
 @media (prefers-reduced-motion: reduce) {

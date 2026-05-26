@@ -9,16 +9,12 @@
   </head>
   <body>
     <main id="deck" aria-live="polite">
+
       <section class="slide is-active" data-scene="hook">
         <canvas class="scene-canvas" data-canvas="hook"></canvas>
         <div class="claim">
-          <p class="kicker">0:00 — Hook</p>
-          <h1>Mismas leyes, futuros distintos</h1>
-          <p>Dos simulaciones obedecen la misma EDO. Solo cambia <code>θ₂(0)</code> en <code>10⁻⁶ rad</code>.</p>
-          <div class="metric-row" aria-label="Métrica inicial de perturbación">
-            <span class="pill">perturbación microscópica</span>
-            <span class="pill accent">efecto macroscópico</span>
-          </div>
+          <h1>Mismas leyes,<br>futuros distintos</h1>
+          <p>Solo cambia <code>θ₂(0)</code> en <code>10⁻⁶ rad</code>.</p>
         </div>
         <aside class="notes">Abrir con contraste visual: al principio las trayectorias parecen una sola, luego se separan. La pregunta no es si las leyes fallan, sino por qué una diferencia tan pequeña puede amplificarse.</aside>
       </section>
@@ -26,12 +22,10 @@
       <section class="slide" data-scene="simple">
         <canvas class="scene-canvas" data-canvas="simple"></canvas>
         <div class="claim right">
-          <p class="kicker">0:25 — Física I base</p>
-          <h2>Primero, el caso ordenado</h2>
-          <p>El ángulo se mide desde la vertical hacia abajo. Esa convención también se usa en el péndulo doble.</p>
+          <h2>El caso ordenado</h2>
           <p class="equation">ω = dθ / dt</p>
           <p class="equation">α = d²θ / dt²</p>
-          <p class="equation">sin(θ) ≈ θ para |θ| ≪ 1</p>
+          <p class="equation dim">sin(θ) ≈ θ &nbsp; para &nbsp; |θ| ≪ 1</p>
         </div>
         <aside class="notes">Esta escena ancla el proyecto en Física I: oscilaciones, gravedad, energía y rotación. El péndulo simple es el punto de partida familiar antes de mostrar el acoplamiento.</aside>
       </section>
@@ -39,10 +33,9 @@
       <section class="slide" data-scene="state">
         <canvas class="scene-canvas" data-canvas="state"></canvas>
         <div class="claim">
-          <p class="kicker">0:55 — Segunda masa</p>
-          <h2>Agregar una barra cambia el juego</h2>
-          <p>El estado pasa de una coordenada a cuatro variables acopladas.</p>
+          <h2>Cuatro variables acopladas</h2>
           <p class="state-vector">s(t) = [θ<sub>1</sub>, ω<sub>1</sub>, θ<sub>2</sub>, ω<sub>2</sub>]</p>
+          <p>El movimiento de una barra afecta el de la otra.</p>
         </div>
         <aside class="notes">No cambiamos de leyes. Seguimos con mecánica clásica: gravedad, energía y rotación. Lo nuevo es que el movimiento de una barra afecta el de la otra.</aside>
       </section>
@@ -50,9 +43,7 @@
       <section class="slide" data-scene="geometry">
         <canvas class="scene-canvas" data-canvas="geometry"></canvas>
         <div class="claim compact">
-          <p class="kicker">1:20 — Modelo geométrico</p>
           <h2>De ángulos a posiciones</h2>
-          <p>Las coordenadas salen por trigonometría, no por dibujo libre.</p>
           <div class="formula-stack" aria-label="Coordenadas del péndulo doble">
             <p><span>x<sub>1</sub></span> = L<sub>1</sub> sin(θ<sub>1</sub>)</p>
             <p><span>y<sub>1</sub></span> = −L<sub>1</sub> cos(θ<sub>1</sub>)</p>
@@ -66,10 +57,9 @@
       <section class="slide" data-scene="simulation">
         <canvas class="scene-canvas" data-canvas="simulation"></canvas>
         <div class="claim compact">
-          <p class="kicker">1:55 — Simulación numérica</p>
-          <h2>Resolver, no dibujar a mano</h2>
-          <p><code>solve_ivp</code> integra el sistema como problema de valor inicial.</p>
+          <h2>Resolver, no dibujar</h2>
           <p class="equation">d s / dt = f(t, s)</p>
+          <p><code>solve_ivp</code> integra el sistema paso a paso.</p>
         </div>
         <aside class="notes">Cada frame sale del modelo físico. La animación no es una coreografía: es la visualización de una solución numérica reproducible.</aside>
       </section>
@@ -77,10 +67,8 @@
       <section class="slide" data-scene="angle-space">
         <canvas class="scene-canvas" data-canvas="angle-space"></canvas>
         <div class="claim compact">
-          <p class="kicker">2:20 — Espacio de ángulos</p>
-          <h2>Mirar el movimiento como señal</h2>
-          <p>En vez de seguir solo la masa, graficamos <code>θ<sub>1</sub></code> contra <code>θ<sub>2</sub></code>.</p>
-          <p class="equation long">orden local, geometría global compleja</p>
+          <h2>Movimiento como señal</h2>
+          <p>Graficamos <code>θ<sub>1</sub></code> contra <code>θ<sub>2</sub></code>.</p>
         </div>
         <aside class="notes">Esta escena prepara el mapa global. Primero vemos una trayectoria individual en espacio de ángulos; luego repetimos el experimento para miles de condiciones iniciales.</aside>
       </section>
@@ -88,13 +76,9 @@
       <section class="slide" data-scene="energy">
         <canvas class="scene-canvas" data-canvas="energy"></canvas>
         <div class="claim compact">
-          <p class="kicker">2:45 — Control de calidad</p>
-          <h2>La energía total casi no se mueve</h2>
-          <p>Si el integrador inventara energía, no podríamos confiar en la sensibilidad observada.</p>
-          <p class="equation">E(t) = T(t) + V(t) ≈ constante</p>
-          <div class="metric-row" aria-label="Deriva de energía">
-            <span class="pill">deriva relativa máx. ≈ 2.6×10⁻⁶</span>
-          </div>
+          <h2>La energía se conserva</h2>
+          <p class="equation">E(t) = T(t) + V(t) ≈ cte.</p>
+          <p>Deriva relativa máxima ≈ 2.6×10⁻⁶</p>
         </div>
         <aside class="notes">La energía total es el ancla de confianza. La divergencia no se debe a que el modelo viole groseramente la conservación de energía.</aside>
       </section>
@@ -102,11 +86,9 @@
       <section class="slide" data-scene="divergence">
         <canvas class="scene-canvas" data-canvas="divergence"></canvas>
         <div class="claim right compact">
-          <p class="kicker">3:20 — Sensibilidad</p>
           <h2>Δ(t) crece</h2>
-          <p>Medimos la separación entre dos estados casi idénticos en escala logarítmica.</p>
-          <p class="equation long">Δ(t) = ||s(t) − s'(t)||</p>
-          <p class="caveat">No es un exponente de Lyapunov formal: es evidencia numérica de sensibilidad.</p>
+          <p class="equation">Δ(t) = ‖s(t) − s′(t)‖</p>
+          <p class="caveat">Evidencia numérica de sensibilidad, no un exponente de Lyapunov formal.</p>
         </div>
         <aside class="notes">Decir explícitamente que no estamos vendiendo una prueba formal de caos. Mostramos una medición de divergencia temprana compatible con sensibilidad a condiciones iniciales.</aside>
       </section>
@@ -114,14 +96,12 @@
       <section class="slide" data-scene="periodic-orbits">
         <canvas class="scene-canvas" data-canvas="periodic-orbits"></canvas>
         <div class="claim center">
-          <p class="kicker">3:40 — Patrones individuales</p>
           <h2>El caos tiene reglas ocultas</h2>
-          <p>Antes de ver todo el mapa, observemos tres condiciones iniciales que generan movimiento periódico y perfectamente coherente.</p>
         </div>
-        <div class="mini-sims-grid">
-            <div class="mini-sim-container"><canvas id="sim-pretzel" class="mini-sim-canvas"></canvas><p class="mini-sim-label">Pretzel</p></div>
-            <div class="mini-sim-container"><canvas id="sim-shoelace" class="mini-sim-canvas"></canvas><p class="mini-sim-label">Shoelace</p></div>
-            <div class="mini-sim-container"><canvas id="sim-heart" class="mini-sim-canvas"></canvas><p class="mini-sim-label">Corazón</p></div>
+        <div class="orbit-trio">
+            <div class="orbit-cell"><canvas id="sim-pretzel" class="orbit-canvas"></canvas><span class="orbit-name">Pretzel</span></div>
+            <div class="orbit-cell"><canvas id="sim-shoelace" class="orbit-canvas"></canvas><span class="orbit-name">Shoelace</span></div>
+            <div class="orbit-cell"><canvas id="sim-heart" class="orbit-canvas"></canvas><span class="orbit-name">Corazón</span></div>
         </div>
         <aside class="notes">Presentar a los individuos antes del grupo. Estas tres órbitas son periódicas, un comportamiento inesperado en un sistema caótico.</aside>
       </section>
@@ -129,14 +109,11 @@
       <section class="slide" data-scene="map">
         <div class="map-stage">
           <canvas class="scene-canvas map-canvas" data-canvas="map"></canvas>
-          <div class="map-scan"></div>
         </div>
         <div class="claim compact">
-          <p class="kicker">3:55 — Mapa global</p>
           <h2>Un mapa de futuros</h2>
-          <p>Cada pixel nace de resolver la misma EDO con una condición inicial distinta.</p>
+          <p>Cada pixel nace de resolver la misma EDO con otra condición inicial.</p>
           <p class="caveat">Color = tiempo hasta el primer flip.</p>
-          <p class="caveat">Zonas oscuras = no flip en la ventana simulada.</p>
         </div>
         <aside class="notes">Este es el momento inspirado en 2swap/Observable. No presentar el mapa como imagen pegada: cada punto es un experimento computacional. La frontera irregular es el mensaje.</aside>
       </section>
@@ -144,42 +121,35 @@
       <section class="slide" data-scene="islands">
         <div class="map-stage">
           <canvas class="scene-canvas map-canvas" data-canvas="islands"></canvas>
-          <div class="map-scan"></div>
         </div>
         <div class="claim compact">
-          <p class="kicker">4:15 — Estructuras periódicas</p>
-          <h2>Islas de orden en el caos</h2>
-          <p>Las regiones oscuras albergan órbitas periódicas coherentes como el pretzel; las zonas de color son caóticas.</p>
+          <h2>Islas de orden</h2>
           <div class="formula-stack" aria-label="Estructuras de islas de estabilidad">
-            <p><span>Zona oscura</span> ⇒ Movimiento periódico y regular</p>
-            <p><span>Frontera irregular</span> ⇒ Alta sensibilidad e inestabilidad</p>
-          </div>
-          <div class="zoom-container">
-            <img src="assets/fractal_zoom.gif" alt="Zoom en el fractal" class="zoom-gif" />
+            <p><span>Zona oscura</span> → movimiento periódico</p>
+            <p><span>Frontera irregular</span> → sensibilidad extrema</p>
           </div>
         </div>
-        <aside class="notes">Después de ver el mapa global, esta escena señala que no todo es caos. Existen 'islas de estabilidad' donde el péndulo sigue un patrón regular, como el pretzel que se dibuja en la simulación adjunta, demostrando orden dentro del mapa no lineal.</aside>
+        <aside class="notes">Después de ver el mapa global, esta escena señala que no todo es caos. Existen islas de estabilidad donde el péndulo sigue un patrón regular.</aside>
       </section>
 
       <section class="slide" data-scene="close">
         <canvas class="scene-canvas" data-canvas="close"></canvas>
         <div class="claim center">
-          <p class="kicker">4:35 — Cierre</p>
           <h2>Determinismo no significa predictibilidad práctica</h2>
           <p>La física da las reglas. La computación revela sus consecuencias.</p>
-          <p class="sources">Física I + Cálculo I + EDOs + visualización científica</p>
-          <p class="caveat">Alcance honesto: sin rozamiento y sin Lyapunov formal; sí hay simulación reproducible, energía controlada, divergencia y mapa de condiciones iniciales.</p>
+          <p class="caveat">Sin rozamiento, sin Lyapunov formal. Sí: simulación reproducible, energía controlada, divergencia medida, mapa de condiciones iniciales.</p>
         </div>
-        <aside class="notes">Cerrar con la idea central y las limitaciones. Eso protege la defensa oral: no prometemos una prueba matemática completa; defendemos evidencia numérica clara.</aside>
+        <aside class="notes">Cerrar con la idea central y las limitaciones. Eso protege la defensa oral.</aside>
       </section>
+
     </main>
  
     <nav class="chrome" aria-label="Controles de presentación">
-      <button id="prev" type="button" aria-label="Anterior">Anterior</button>
+      <button id="prev" type="button" aria-label="Anterior">←</button>
       <div class="progress"><span id="progress-bar"></span></div>
       <output id="counter">1 / 12</output>
-      <button id="notes-toggle" type="button">Notas</button>
-      <button id="next" type="button" aria-label="Siguiente">Siguiente</button>
+      <button id="notes-toggle" type="button">N</button>
+      <button id="next" type="button" aria-label="Siguiente">→</button>
     </nav>
 
     <div id="notes-panel" class="notes-panel" hidden></div>
