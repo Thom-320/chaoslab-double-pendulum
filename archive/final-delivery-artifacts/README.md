@@ -1,6 +1,6 @@
 # ChaosLab final delivery artifacts
 
-This folder archives the review ZIPs, patches, and loose Markdown artifacts used during the final ChaosLab presentation iteration.
+This folder archives the review ZIPs, patches, loose Markdown, PDF, and HTML artifacts used during the final ChaosLab presentation iteration.
 
 Policy applied before committing:
 
@@ -15,11 +15,12 @@ Summary:
 
 ```json
 {
-  "source_candidates": 21,
-  "source_unique_stored": 16,
+  "source_candidates": 24,
+  "source_unique_stored": 19,
   "source_duplicates_skipped": 4,
   "source_skipped": 1,
   "zips_stored": 10,
+  "loose_pdf_html_md_patch_stored": 9,
   "zips_extracted": 10,
   "entries_extracted_unique": 94,
   "entries_duplicate_skipped": 226,
