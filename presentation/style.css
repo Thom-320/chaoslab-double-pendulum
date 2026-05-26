@@ -264,17 +264,6 @@ code,
   box-shadow: 0 24px 120px oklch(2% 0.01 260 / 0.55);
 }
 
-.map-reference {
-  position: absolute;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  opacity: 0.26;
-  filter: saturate(1.12) contrast(1.05);
-  animation: map-breathe 12s var(--ease) infinite alternate;
-}
-
 .map-stage .map-canvas {
   z-index: 2;
 }

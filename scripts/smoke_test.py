@@ -57,6 +57,7 @@ def main() -> None:
     assert "angle-space" in deck, "Presentation must include the angle-space bridge scene"
     assert "Lyapunov formal" in deck, "Presentation must avoid overclaiming formal chaos proof"
     assert "Cada pixel" in deck, "Map slide must explain how the global map is produced"
+    assert "map-reference" not in deck, "Map slide must be rendered from data, not a pasted reference image"
     assert "renderMap" in script, "Presentation script must render the progressive map"
     assert '"map"' in data_js and '"flipTimes"' in data_js, "Presentation data must include a map payload"
     assert '"resolution":120' in data_js, "Presentation map payload must retain 14,400 initial conditions"
