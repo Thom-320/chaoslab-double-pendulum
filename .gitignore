@@ -15,3 +15,4 @@ report/latex/*.log
 report/latex/*.out
 report/latex/*Notes.bib
 report/latex/informe_final.pdf
+node_modules/
