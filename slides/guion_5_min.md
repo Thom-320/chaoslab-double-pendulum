@@ -62,14 +62,26 @@ En escala logarítmica, `Δ(t)` crece rápidamente durante la ventana inicial. E
 
 La frase central es: la pérdida de predictibilidad no aparece porque falten leyes; aparece porque las leyes amplifican diferencias pequeñas.
 
-## 3:50–4:35 — Mapa global: cada pixel es un experimento
+## 3:40–3:55 — Patrones individuales: el caos tiene reglas ocultas
 
+Antes de ver todo el mapa, observemos tres condiciones iniciales que, contra toda expectativa, generan movimiento perfectamente periódico: un pretzel, un shoelace y un corazón. Las tres repiten su patrón de forma indefinida.
+
+Siguiendo la idea de 2swap: primero presentamos a los individuos y después al grupo. Ahora sí: expandamos la vista a miles de experimentos.
+
+## 3:55–4:15 — Mapa global: cada pixel es un experimento
+ 
 Ahora pasamos de una simulación a miles. Cada pixel del mapa representa una condición inicial: en el eje horizontal está `θ₁(0)` y en el eje vertical está `θ₂(0)`. Para cada punto resolvemos la misma EDO y medimos cuánto tarda en ocurrir el primer flip.
 
-El color codifica ese tiempo. Las zonas oscuras no hacen flip dentro de la ventana simulada; por eso las llamamos regiones o islas de estabilidad solo en sentido operativo, no absoluto. Lo importante es la frontera irregular: puntos iniciales muy cercanos pueden producir futuros muy distintos.
+El color codifica ese tiempo. Las zonas claras indican un flip rápido; por eso el mapa se revela como un conjunto de experimentos reales, no como una textura pegada. Lo importante es la frontera irregular: puntos iniciales sumamente cercanos pueden producir futuros drásticamente distintos.
+
+## 4:15–4:35 — Estructuras periódicas: islas de orden en el caos
+
+Pero dentro de esta complejidad, no todo es caos. Si miramos las regiones oscuras del mapa global —lo que llamamos islas de estabilidad— encontramos algo fascinante: trayectorias que repiten el mismo patrón de manera indefinida.
+
+Como ven en la simulación adjunta en pantalla, bajo la condición inicial marcada por la mira de cruz (`θ₁ = 92°`, `θ₂ = -96°`), el péndulo dibuja un pretzel ordenado y recurrente. Estas órbitas demuestran que el determinismo físico puede albergar tanto una sensibilidad caótica extrema como hermosas estructuras de orden periódico estable.
 
 ## 4:35–5:00 — Cierre: determinismo no es predictibilidad práctica
 
-ChaosLab muestra que un sistema de mecánica clásica puede ser determinista y aun así difícil de predecir en la práctica. Las reglas son fijas; lo complicado es que pequeñas incertidumbres iniciales pueden crecer hasta cambiar el resultado observable.
+ChaosLab muestra que un sistema de mecánica clásica puede ser perfectamente determinista y aun así difícil de predecir en la práctica. Las reglas son fijas; lo complejo es que pequeñas incertidumbres iniciales pueden crecer hasta cambiar el resultado observable.
 
-El alcance es honesto: sin rozamiento, sin medición experimental directa y sin exponente de Lyapunov formal. Pero el núcleo está completo: modelo físico, integración reproducible, conservación de energía como control, divergencia entre trayectorias y mapa de condiciones iniciales.
+El alcance de nuestro trabajo es honesto: sin rozamiento, sin medición experimental directa y sin exponente de Lyapunov formal. Pero el núcleo está completo: modelo físico, integración reproducible, conservación de energía como control de calidad, divergencia temporal entre trayectorias y mapa de condiciones iniciales. Muchas gracias.

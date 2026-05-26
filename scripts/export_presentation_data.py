@@ -60,6 +60,18 @@ def main() -> None:
     T, V, E = energy(y, params)
     delta = divergence(y, yb)
 
+    y0_stable = np.array([np.radians(92.0), 0.0, np.radians(-96.0), 0.0])
+    _, y_stable = simulate(y0_stable, params, t_max=24.0, n=720)
+    xs1, ys1, xs2, ys2 = positions(y_stable, params)
+
+    y0_stable2 = np.array([np.radians(50.0), 0.0, np.radians(50.0), 0.0])
+    _, y_stable2 = simulate(y0_stable2, params, t_max=24.0, n=720)
+    x2s1, y2s1, x2s2, y2s2 = positions(y_stable2, params)
+
+    y0_stable3 = np.array([np.radians(35.0), 0.0, np.radians(-35.0), 0.0])
+    _, y_stable3 = simulate(y0_stable3, params, t_max=24.0, n=720)
+    x3s1, y3s1, x3s2, y3s2 = positions(y_stable3, params)
+
     reg_t = np.linspace(0.0, 12.0, 360)
     theta = 0.52 * np.cos(np.sqrt(params.g / params.L1) * reg_t)
     simple = {
@@ -85,6 +97,24 @@ def main() -> None:
             "yb1": _round_list(yb1),
             "xb2": _round_list(xb2),
             "yb2": _round_list(yb2),
+        },
+        "stable": {
+            "x1": _round_list(xs1),
+            "y1": _round_list(ys1),
+            "x2": _round_list(xs2),
+            "y2": _round_list(ys2),
+        },
+        "stable2": {
+            "x1": _round_list(x2s1),
+            "y1": _round_list(y2s1),
+            "x2": _round_list(x2s2),
+            "y2": _round_list(y2s2),
+        },
+        "stable3": {
+            "x1": _round_list(x3s1),
+            "y1": _round_list(y3s1),
+            "x2": _round_list(x3s2),
+            "y2": _round_list(y3s2),
         },
         "energy": {
             "t": _round_list(t, 4),

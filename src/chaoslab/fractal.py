@@ -44,6 +44,8 @@ def flip_time_map(
     t_max: float = 24.0,
     dt: float = 0.03,
     params: DoublePendulumParams = DoublePendulumParams(),
+    theta1_bounds: tuple[float, float] = (-np.pi, np.pi),
+    theta2_bounds: tuple[float, float] = (-np.pi, np.pi),
 ) -> tuple[Array, Array, Array]:
     """Compute a 2D map of first flip time over initial angles.
 
@@ -55,8 +57,8 @@ def flip_time_map(
     integrator to produce a fast, presentation-friendly image.
     """
     n = int(resolution)
-    theta1 = np.linspace(-np.pi, np.pi, n)
-    theta2 = np.linspace(-np.pi, np.pi, n)
+    theta1 = np.linspace(theta1_bounds[0], theta1_bounds[1], n)
+    theta2 = np.linspace(theta2_bounds[0], theta2_bounds[1], n)
     TH1, TH2 = np.meshgrid(theta1, theta2, indexing="xy")
     y = np.stack([TH1.copy(), np.zeros_like(TH1), TH2.copy(), np.zeros_like(TH1)], axis=0)
     flip_times = np.full_like(TH1, fill_value=float(t_max), dtype=float)

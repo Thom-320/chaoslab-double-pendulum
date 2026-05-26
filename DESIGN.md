@@ -1,30 +1,33 @@
-# ChaosLab Design Context
+# Design
 
-## Scene Sentence
+## Theme
+A dim, focused lecture hall environment. The visual weight is purely on the chaotic orbits. 
 
-A student presents in a dark classroom projector setting, guiding evaluators through a physics mini-documentary where equations become motion and motion becomes a map.
+## Color Strategy
+"Committed" dark mode using OKLCH. No pure blacks or whites; all neutrals are tinted slightly violet/indigo to evoke a sophisticated academic night-time feel.
 
-## Palette
-
-Use tinted near-black backgrounds, not pure black.
-
-- Background: `oklch(8% 0.015 260)`
-- Surface: `oklch(12% 0.018 260)`
-- Text: `oklch(94% 0.01 90)`
-- Muted text: `oklch(73% 0.025 275)`
-- Cyan motion: `oklch(82% 0.16 205)`
-- Gold energy: `oklch(84% 0.16 85)`
-- Magenta perturbation: `oklch(72% 0.22 335)`
-- Green stability: `oklch(78% 0.18 145)`
+Base Background: `oklch(12% 0.025 285)`
+Surface Layer: `oklch(18% 0.035 285)`
+Text (Primary): `oklch(95% 0.015 285)`
+Text (Muted): `oklch(75% 0.03 285)`
+Accent (Math highlight): `oklch(80% 0.15 80)` (A warm gold)
+Accent (Divergence highlight): `oklch(75% 0.18 20)` (A stark orange-red)
+Accent (Stable highlight): `oklch(85% 0.14 200)` (A sharp cyan)
 
 ## Typography
+- **Headings/Display**: "Spectral" (Google Fonts) - A gorgeous, rigorous academic serif that feels like a modern mathematical manuscript.
+- **Body/UI**: "Public Sans" (Google Fonts) - Clean, highly legible sans-serif for UI labels and body text, avoiding the "Inter" monoculture.
+- **Monospace/Math**: "Fira Code" (Google Fonts) - Distinctive coding font for mathematical vectors and equations.
 
-Use a system sans stack for reliability in local presentation. Use strong scale contrast: large claims, small precise labels, minimal prose. Avoid generic monospace as visual costume; reserve monospace only for state vectors and code identifiers.
-
-## Layout
-
-Full-screen scenes, no decorative cards. Each slide has a claim, a proof object, and a speaker cue. Use side rails and progress markers only when they help navigation.
+Fluid scale with $\ge 1.25$ ratio between steps. 
+Body line height: `1.6`
 
 ## Motion
+No generic spring or elastic animations.
+All transitions use `ease-out-expo` (`cubic-bezier(0.19, 1, 0.22, 1)`) for a decisive, physical feel.
+Avoid animating layout properties.
 
-Each scene should loop without jarring cuts. Prefer canvas animations and short MP4 loops. Respect reduced motion by keeping static figures visible if animations are disabled.
+## Layout
+- Asymmetric compositions to break away from the "centered stack" template.
+- Fluid padding (`clamp()`) to ensure rhythmic spacing.
+- No side-stripe borders, no nested cards, no generic metric grids.

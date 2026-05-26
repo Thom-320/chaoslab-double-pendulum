@@ -1,32 +1,27 @@
-# ChaosLab Product Context
+# Product
 
-register: brand
+## Register
 
-## Product Purpose
-
-ChaosLab is a Physics I final project and portfolio artifact. Its main surface is a five-minute animated explanation of the double pendulum: deterministic laws, energy conservation, sensitivity to initial conditions, and initial-condition maps.
+brand
 
 ## Users
+Mathematics students, physics enthusiasts, and curious minds. They are watching this presentation to understand chaos theory visually without being overwhelmed by academic jargon or bored by standard slides.
 
-- Physics I professor and external peer evaluators.
-- Classmates watching a short technical pitch.
-- Future GitHub visitors evaluating the project as scientific-computing portfolio work.
+## Product Purpose
+To visualize the double pendulum fractal, intuitively explain chaos theory, and reveal the hidden "islands of stability". Success looks like an awe-inspiring, instantly understandable presentation.
 
-## Brand Voice
+## Brand Personality
+Rigorous, awe-inspiring, precise, scientific, and elegant.
 
-Precise, cinematic, and rigorous. The project should feel like a compact educational video, not a generic slide deck. It borrows the rhythm of 2swap, 3Blue1Brown, and Veritasium: a visual hook, a clean model, a quantitative proof object, and a memorable final image.
+## Anti-references
+- Generic SaaS dashboards with floating cards and box-shadows.
+- Cluttered, text-heavy academic PowerPoint slides.
+- Over-stimulating "hacker" interfaces with neon green on black.
 
-## Anti-References
+## Design Principles
+- Let the math speak for itself (data is the hero).
+- Rigor over spectacle (no decorative elements without meaning).
+- Visual silence (restraint to emphasize the data).
 
-- Bullet-heavy classroom PowerPoint.
-- Random neon effects without explanation.
-- AI/ML as decoration.
-- Overclaiming formal chaos proofs beyond the evidence.
-
-## Strategic Principles
-
-- One idea per scene.
-- Animation must explain state, not decorate.
-- The energy plot is the trust anchor.
-- The fractal map is the visual finale.
-- The final repository should be runnable, readable, and safe to upload.
+## Accessibility & Inclusion
+High contrast for legibility in a dark room. No strobe effects.
