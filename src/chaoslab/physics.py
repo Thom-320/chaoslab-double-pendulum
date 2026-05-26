@@ -26,9 +26,8 @@ def rhs(t: float, y: Array, p: DoublePendulumParams) -> Array:
     """Right-hand side of the double-pendulum ODE.
 
     This is the standard point-mass double pendulum model. It is sufficient for
-    the project because the objective is not an industrial-grade pendulum, but a
-    reproducible demonstration of nonlinear mechanics and sensitivity to initial
-    conditions. Humanity survives another approximation.
+    the project because the objective is a reproducible demonstration of nonlinear
+    mechanics and sensitivity to initial conditions.
     """
     th1, w1, th2, w2 = y
     m1, m2, L1, L2, g = p.m1, p.m2, p.L1, p.L2, p.g
@@ -130,7 +129,7 @@ def estimate_lyapunov_slope(t: Array, delta: Array, fit_window: tuple[float, flo
     """Crude estimate of the early-time slope of log(delta(t)).
 
     It is not a formal Lyapunov exponent. It is a presentation-safe quantitative
-    indicator of sensitivity, which is a polite way of not overclaiming.
+    indicator of sensitivity to initial conditions.
     """
     t = np.asarray(t)
     delta = np.asarray(delta)

@@ -1,53 +1,75 @@
-# Guion de 5 minutos - ChaosLab
+# Guion final de 5 minutos — ChaosLab
 
-## 0:00-0:25 - Hook
+## 0:00–0:25 — Hook: mismas leyes, futuros distintos
 
-Miren estos dos pendulos. A simple vista empiezan igual. Obedecen las mismas leyes, tienen las mismas masas y longitudes, y la diferencia inicial es de apenas `1e-6 rad`. Eso es invisible para nosotros. Sin embargo, despues de unos segundos, sus futuros se separan.
+Miren estas dos simulaciones. Tienen las mismas masas, las mismas longitudes y obedecen exactamente la misma ecuación diferencial. La única diferencia es que en una de ellas cambié el ángulo inicial de la segunda barra en `10⁻⁶ rad`, una perturbación demasiado pequeña para verla en la pantalla.
 
-La pregunta del proyecto es: **si las leyes son deterministas, por que el futuro deja de ser predecible?**
+Durante unos segundos parecen el mismo sistema. Luego dejan de estar de acuerdo. El proyecto nace de esa tensión: **si la mecánica clásica es determinista, ¿por qué el futuro puede volverse prácticamente impredecible?**
 
-## 0:25-0:55 - Fisica I base
+## 0:25–0:55 — Física I base: el péndulo simple
 
-Partimos del pendulo simple, un sistema clasico de Fisica I. Su posicion se describe con un angulo `theta`. La velocidad angular es `d theta / dt` y la aceleracion angular es `d^2 theta / dt^2`. Para angulos pequenos usamos `sin(theta) ~= theta`, y por eso aparece un movimiento casi periodico.
+Partimos del caso ordenado de Física I: el péndulo simple. Su posición se describe con un ángulo `θ` medido desde la vertical. La velocidad angular es `ω = dθ/dt`; para oscilaciones pequeñas usamos `sin(θ) ≈ θ`, y aparece un movimiento casi periódico.
 
-Ese es el caso ordenado: energia potencial se transforma en energia cinetica y luego vuelve.
+Ese caso nos da el vocabulario: posición angular, velocidad angular, energía potencial gravitacional y energía cinética.
 
-## 0:55-1:25 - Agregar una segunda masa
+## 0:55–1:20 — Segunda masa: cuatro variables acopladas
 
-Ahora agregamos una segunda masa. El estado ya no es solo un angulo: es `[theta1, omega1, theta2, omega2]`. El movimiento de una barra afecta a la otra. Las ecuaciones quedan acopladas y aparecen terminos no lineales.
+Al agregar una segunda barra, el estado ya no es solo un ángulo. Ahora es
 
-No cambiamos de universo fisico. Seguimos usando gravedad, energia y movimiento rotacional. Solo aumentamos el numero de grados de libertad.
+`s(t) = [θ₁, ω₁, θ₂, ω₂]`.
 
-## 1:25-2:05 - Simulacion numerica
+No cambiamos de leyes. Seguimos usando gravedad, energía y rotación. Lo que cambia es que el movimiento de una barra afecta el movimiento de la otra. Ese acoplamiento es el origen de la complejidad.
 
-Como las ecuaciones del pendulo doble no tienen una solucion analitica simple para condiciones generales, resolvemos el sistema numericamente. En Python usamos `solve_ivp`, que integra problemas de valor inicial para sistemas de ecuaciones diferenciales.
+## 1:20–1:50 — Modelo geométrico: de ángulos a coordenadas
 
-La simulacion recibe una condicion inicial, calcula velocidades y aceleraciones, y avanza en el tiempo. El resultado no es una animacion inventada: cada punto sale de integrar el modelo fisico.
+Para simular no basta con dibujar dos líneas. Primero convertimos ángulos en posiciones:
 
-## 2:05-2:45 - Energia como prueba de calidad
+`x₁ = L₁ sin(θ₁)`, `y₁ = -L₁ cos(θ₁)`.
 
-Antes de hablar de caos, hay que comprobar que el modelo no esta fallando. Por eso calculamos energia cinetica, potencial y total.
+Luego la segunda masa se calcula desde la primera:
 
-La cinetica y la potencial suben y bajan, pero la energia total permanece casi constante. Esa es la prueba clave: la divergencia no aparece porque el integrador este creando energia de la nada. Aparece porque el sistema es no lineal.
+`x₂ = x₁ + L₂ sin(θ₂)`, `y₂ = y₁ - L₂ cos(θ₂)`.
 
-## 2:45-3:35 - Sensibilidad inicial
+Esto conecta la animación con el modelo físico. Cada punto que aparece en pantalla sale de estas coordenadas.
 
-Ahora corremos dos simulaciones. La segunda solo cambia `theta2(0)` en `1e-6 rad`. Medimos la distancia entre ambos estados con `Delta(t)`.
+## 1:50–2:20 — Simulación numérica: resolver, no coreografiar
 
-En escala logaritmica, la distancia crece rapidamente durante la ventana inicial. No estamos afirmando un exponente de Lyapunov formal; estamos mostrando una evidencia cuantitativa de sensibilidad a condiciones iniciales.
+Las ecuaciones del péndulo doble son acopladas y no tienen una solución analítica simple para condiciones generales. Por eso las resolvemos numéricamente como un problema de valor inicial:
 
-La frase central es esta: **la perdida de predictibilidad no aparece por falta de leyes, sino porque las leyes amplifican diferencias pequenas.**
+`ds/dt = f(t, s)`.
 
-## 3:35-4:35 - Mapa de condiciones iniciales
+En el repositorio usamos `solve_ivp`. La simulación recibe una condición inicial, calcula aceleraciones y velocidades, y avanza en el tiempo. La animación no está inventada cuadro por cuadro; es una visualización de la solución numérica.
 
-Ahora convertimos una simulacion en miles. Cada pixel del mapa es un experimento: escogemos `theta1(0)` y `theta2(0)`, soltamos el pendulo y medimos cuanto tarda en hacer el primer flip.
+## 2:20–2:45 — Espacio de ángulos: mirar el movimiento como señal
 
-Las zonas oscuras no hacen flip dentro de la ventana simulada. Las regiones de color hacen flip en distintos tiempos. Lo importante son las fronteras: pequenas variaciones en el punto inicial pueden cambiar completamente el resultado.
+Antes de saltar al mapa completo, miramos una sola trayectoria de otra forma: graficamos `θ₁` contra `θ₂`.
 
-Este es el momento 2swap del proyecto: una regla local sencilla produce una imagen global compleja.
+Esto convierte el movimiento del péndulo en una señal en el espacio de ángulos. La idea tomada de 2swap es importante: primero entendemos una trayectoria individual y después repetimos el experimento para muchas condiciones iniciales.
 
-## 4:35-5:00 - Cierre
+## 2:45–3:15 — Energía: control de calidad numérica
 
-ChaosLab muestra que un sistema clasico puede ser determinista y, aun asi, dificil de predecir en la practica. La fisica da las reglas; la computacion nos deja ver sus consecuencias.
+Antes de hablar de caos, hay que verificar que el integrador no esté inventando energía. Calculamos energía cinética, potencial y total.
 
-Como trabajo futuro, se puede agregar validacion experimental con video tracking, comparar integradores o entrenar un modelo surrogate que clasifique regiones de estabilidad. Pero el nucleo ya esta: mecanica clasica, calculo, energia, ecuaciones diferenciales y visualizacion.
+La cinética y la potencial se intercambian, pero la energía total permanece casi constante. En esta corrida, la deriva relativa máxima está alrededor de `2.6×10⁻⁶`. Eso no prueba caos, pero sí nos dice que la simulación es confiable para analizar el comportamiento observado.
+
+## 3:15–3:50 — Sensibilidad: una diferencia microscópica crece
+
+Ahora corremos dos simulaciones casi idénticas y medimos
+
+`Δ(t) = ||s(t) - s'(t)||`.
+
+En escala logarítmica, `Δ(t)` crece rápidamente durante la ventana inicial. Esta pendiente es un indicador útil de sensibilidad, pero hay que decirlo bien: **no estamos calculando un exponente de Lyapunov formal**. Estamos mostrando evidencia numérica de sensibilidad a condiciones iniciales.
+
+La frase central es: la pérdida de predictibilidad no aparece porque falten leyes; aparece porque las leyes amplifican diferencias pequeñas.
+
+## 3:50–4:35 — Mapa global: cada pixel es un experimento
+
+Ahora pasamos de una simulación a miles. Cada pixel del mapa representa una condición inicial: en el eje horizontal está `θ₁(0)` y en el eje vertical está `θ₂(0)`. Para cada punto resolvemos la misma EDO y medimos cuánto tarda en ocurrir el primer flip.
+
+El color codifica ese tiempo. Las zonas oscuras no hacen flip dentro de la ventana simulada; por eso las llamamos regiones o islas de estabilidad solo en sentido operativo, no absoluto. Lo importante es la frontera irregular: puntos iniciales muy cercanos pueden producir futuros muy distintos.
+
+## 4:35–5:00 — Cierre: determinismo no es predictibilidad práctica
+
+ChaosLab muestra que un sistema de mecánica clásica puede ser determinista y aun así difícil de predecir en la práctica. Las reglas son fijas; lo complicado es que pequeñas incertidumbres iniciales pueden crecer hasta cambiar el resultado observable.
+
+El alcance es honesto: sin rozamiento, sin medición experimental directa y sin exponente de Lyapunov formal. Pero el núcleo está completo: modelo físico, integración reproducible, conservación de energía como control, divergencia entre trayectorias y mapa de condiciones iniciales.

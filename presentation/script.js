@@ -348,7 +348,224 @@ function drawEomOverlay(ctx, elapsed, w, h) {
   ctx.fillText("\u03b8\u0308\u2082 = g(\u03b8\u2081, \u03b8\u2082, \u03c9\u2081, \u03c9\u2082)", x, y + 82);
   ctx.globalAlpha = pulse;
   ctx.fillStyle = "oklch(72% 0.22 335)";
-  ctx.fillText("terminos cruzados + senos/cosenos", x, y + 126);
+  ctx.fillText("términos cruzados + senos/cosenos", x, y + 126);
+  ctx.restore();
+}
+
+
+function wrapPi(a) {
+  return Math.atan2(Math.sin(a), Math.cos(a));
+}
+
+function anglesFromSeries(series, i) {
+  const th1 = Math.atan2(series.x1[i], -series.y1[i]);
+  const th2 = Math.atan2(series.x2[i] - series.x1[i], -(series.y2[i] - series.y1[i]));
+  return [wrapPi(th1), wrapPi(th2)];
+}
+
+function drawAngleSpace(ctx, elapsed, w, h) {
+  const dbl = data.double;
+  const idx = Math.floor((elapsed * 42) % dbl.x1.length);
+  const series = { x1: dbl.x1, y1: dbl.y1, x2: dbl.x2, y2: dbl.y2 };
+  drawPendulum(ctx, series, idx, w, h, {
+    ox: w * 0.46,
+    oy: h * 0.20,
+    scale: Math.min(w, h) * 0.10,
+    trail: 55,
+    angles: true,
+    color: "oklch(82% 0.16 205)",
+    bob: "oklch(84% 0.16 85)",
+  });
+
+  const x0 = w * 0.56;
+  const y0 = h * 0.19;
+  const size = Math.min(w * 0.32, h * 0.54);
+  const cx = x0 + size / 2;
+  const cy = y0 + size / 2;
+  ctx.save();
+  ctx.strokeStyle = "oklch(31% 0.035 270)";
+  ctx.lineWidth = 1.2;
+  ctx.strokeRect(x0, y0, size, size);
+
+  ctx.globalAlpha = 0.42;
+  ctx.beginPath();
+  ctx.moveTo(cx, y0);
+  ctx.lineTo(cx, y0 + size);
+  ctx.moveTo(x0, cy);
+  ctx.lineTo(x0 + size, cy);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  ctx.fillStyle = "oklch(73% 0.025 275)";
+  ctx.font = "15px ui-monospace, monospace";
+  ctx.textAlign = "center";
+  ctx.fillText("θ₁", x0 + size, y0 + size + 36);
+  ctx.save();
+  ctx.translate(x0 - 34, y0 + 22);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText("θ₂", 0, 0);
+  ctx.restore();
+
+  const project = (th1, th2) => {
+    const x = x0 + ((th1 + Math.PI) / (2 * Math.PI)) * size;
+    const y = y0 + size - ((th2 + Math.PI) / (2 * Math.PI)) * size;
+    return [x, y];
+  };
+
+  const start = Math.max(0, idx - 260);
+  ctx.strokeStyle = "oklch(82% 0.16 205)";
+  ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  for (let i = start; i <= idx; i += 1) {
+    const [th1, th2] = anglesFromSeries(series, i);
+    const [x, y] = project(th1, th2);
+    if (i === start) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  const [tha, thb] = anglesFromSeries(series, idx);
+  const [px, py] = project(tha, thb);
+  ctx.fillStyle = "oklch(84% 0.16 85)";
+  ctx.beginPath();
+  ctx.arc(px, py, 6, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "oklch(94% 0.01 90)";
+  ctx.font = "20px system-ui";
+  ctx.textAlign = "left";
+  ctx.fillText("trayectoria en espacio de ángulos", x0, y0 - 26);
+  ctx.font = "15px system-ui";
+  ctx.fillStyle = "oklch(73% 0.025 275)";
+  ctx.fillText("un punto = un estado angular del sistema", x0, y0 + size + 64);
+  ctx.restore();
+}
+
+
+function flipColor(value, tMax) {
+  if (!Number.isFinite(value)) return "rgba(5, 7, 18, 0.92)";
+  const v = Math.max(0, Math.min(1, value / Math.max(tMax, 1e-9)));
+  if (v >= 0.995) return "rgba(2, 4, 13, 0.95)";
+  if (v < 0.18) return "rgba(50, 105, 232, 0.94)";
+  if (v < 0.36) return "rgba(38, 199, 229, 0.94)";
+  if (v < 0.56) return "rgba(80, 236, 142, 0.94)";
+  if (v < 0.74) return "rgba(236, 221, 72, 0.94)";
+  if (v < 0.90) return "rgba(250, 125, 38, 0.94)";
+  return "rgba(196, 29, 29, 0.94)";
+}
+
+function renderMap(ctx, elapsed, w, h) {
+  const payload = data.map || {};
+  ctx.save();
+  ctx.fillStyle = "rgba(2, 4, 13, 0.95)";
+  ctx.fillRect(0, 0, w, h);
+
+  const size = Math.min(w * 0.78, h * 0.78);
+  const x0 = (w - size) / 2;
+  const y0 = (h - size) / 2;
+  const rows = payload.flipTimes?.length || 0;
+  const cols = rows ? payload.flipTimes[0].length : 0;
+  const tMax = payload.tMax || 18;
+
+  ctx.strokeStyle = "oklch(31% 0.035 270)";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x0, y0, size, size);
+
+  if (!rows || !cols) {
+    ctx.fillStyle = "oklch(94% 0.01 90)";
+    ctx.font = "18px ui-monospace, monospace";
+    ctx.textAlign = "center";
+    ctx.fillText("mapa no cargado: ejecuta scripts/export_presentation_data.py", w / 2, h / 2);
+    ctx.restore();
+    return;
+  }
+
+  const cellW = size / cols;
+  const cellH = size / rows;
+  const progress = Math.min(1, elapsed / 4.4);
+  const revealCols = Math.max(1, Math.floor(cols * progress));
+
+  for (let r = 0; r < rows; r += 1) {
+    for (let c = 0; c < revealCols; c += 1) {
+      const value = payload.flipTimes[r][c];
+      ctx.fillStyle = flipColor(value, tMax);
+      ctx.fillRect(x0 + c * cellW, y0 + (rows - 1 - r) * cellH, Math.ceil(cellW) + 0.5, Math.ceil(cellH) + 0.5);
+    }
+  }
+
+  const scanX = x0 + revealCols * cellW;
+  ctx.save();
+  ctx.strokeStyle = "oklch(84% 0.16 85)";
+  ctx.globalAlpha = 0.8;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(scanX, y0);
+  ctx.lineTo(scanX, y0 + size);
+  ctx.stroke();
+  ctx.restore();
+
+  function mapTheta(theta1, theta2) {
+    return [x0 + ((theta1 + Math.PI) / (2 * Math.PI)) * size, y0 + size - ((theta2 + Math.PI) / (2 * Math.PI)) * size];
+  }
+
+  if (elapsed > 2.6) {
+    ctx.save();
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.78)";
+    ctx.lineWidth = 1.8;
+    ctx.setLineDash([7, 6]);
+    [1, -1].forEach((branch) => {
+      ctx.beginPath();
+      let first = true;
+      for (let i = 0; i <= 220; i += 1) {
+        const th1 = -Math.PI + (2 * Math.PI * i) / 220;
+        const rhs = 2 - 3 * Math.cos(th1);
+        if (rhs < -1 || rhs > 1) {
+          first = true;
+          continue;
+        }
+        const th2 = branch * Math.acos(rhs);
+        const [px, py] = mapTheta(th1, th2);
+        if (first) {
+          ctx.moveTo(px, py);
+          first = false;
+        } else {
+          ctx.lineTo(px, py);
+        }
+      }
+      ctx.stroke();
+    });
+    ctx.setLineDash([]);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.82)";
+    ctx.font = "13px ui-monospace, monospace";
+    ctx.textAlign = "left";
+    ctx.fillText("frontera energética", x0 + 16, y0 + 24);
+    ctx.restore();
+  }
+
+  ctx.fillStyle = "oklch(73% 0.025 275)";
+  ctx.font = "14px ui-monospace, monospace";
+  ctx.textAlign = "center";
+  ctx.fillText("θ₁(0) [rad]", x0 + size / 2, y0 + size + 34);
+  ctx.save();
+  ctx.translate(x0 - 34, y0 + size / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText("θ₂(0) [rad]", 0, 0);
+  ctx.restore();
+
+  const resolved = revealCols * rows;
+  ctx.textAlign = "right";
+  ctx.fillStyle = "oklch(94% 0.01 90)";
+  ctx.font = "15px ui-monospace, monospace";
+  ctx.fillText(`${resolved.toLocaleString("es-CO")} condiciones iniciales resueltas`, x0 + size, y0 - 18);
+  ctx.textAlign = "left";
+  ctx.fillStyle = "oklch(84% 0.16 85)";
+  ctx.fillText("un pixel = una integración", x0, y0 - 42);
+  if (elapsed > 3.2) {
+    ctx.fillStyle = "oklch(73% 0.025 275)";
+    ctx.font = "14px ui-monospace, monospace";
+    ctx.textAlign = "left";
+    ctx.fillText("zonas oscuras = no flip en la ventana", x0, y0 + size + 58);
+  }
   ctx.restore();
 }
 
@@ -411,6 +628,10 @@ function renderScene(name, ctx, elapsed, w, h) {
     drawEomOverlay(ctx, elapsed, w, h);
   }
 
+  if (name === "angle-space") {
+    drawAngleSpace(ctx, elapsed, w, h);
+  }
+
   if (name === "energy") {
     drawChart(
       ctx,
@@ -419,7 +640,7 @@ function renderScene(name, ctx, elapsed, w, h) {
         { y: data.energy.potential, color: "oklch(72% 0.22 335)" },
         { y: data.energy.total, color: "oklch(84% 0.16 85)", width: 3 },
       ],
-      ["cinetica", "potencial", "total"],
+      ["cinética", "potencial", "total"],
       elapsed,
       w,
       h,
@@ -448,7 +669,7 @@ function renderScene(name, ctx, elapsed, w, h) {
     drawChart(
       ctx,
       [{ y: data.divergence.delta, color: "oklch(78% 0.18 145)", width: 3 }],
-      ["Delta(t), escala log"],
+      ["Δ(t), escala log"],
       elapsed,
       w,
       h,
@@ -456,6 +677,10 @@ function renderScene(name, ctx, elapsed, w, h) {
       "left",
       true
     );
+  }
+
+  if (name === "map") {
+    renderMap(ctx, elapsed, w, h);
   }
 
   if (name === "close") {

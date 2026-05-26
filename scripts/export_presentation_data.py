@@ -16,6 +16,35 @@ def _round_list(values, decimals=5):
     return np.round(np.asarray(values, dtype=float), decimals).tolist()
 
 
+def _load_map_payload(target_resolution: int = 120) -> dict[str, object]:
+    """Load a coarse version of the precomputed flip-time map for the HTML deck.
+
+    The full map stays as a high-resolution figure. This coarse payload lets the
+    presentation build the map progressively, making clear that every pixel comes
+    from an initial-value simulation rather than from a pasted texture.
+    """
+    map_path = ROOT / "data" / "flip_time_map_120.npz"
+    if not map_path.exists():
+        return {}
+
+    archive = np.load(map_path)
+    theta1 = np.asarray(archive["theta1"], dtype=float)
+    theta2 = np.asarray(archive["theta2"], dtype=float)
+    flip_times = np.asarray(archive["flip_times"], dtype=float)
+    step = max(1, int(np.ceil(flip_times.shape[0] / target_resolution)))
+
+    theta1_small = theta1[::step]
+    theta2_small = theta2[::step]
+    flip_small = flip_times[::step, ::step]
+    return {
+        "theta1": _round_list(theta1_small, 4),
+        "theta2": _round_list(theta2_small, 4),
+        "flipTimes": _round_list(flip_small, 3),
+        "tMax": float(np.max(flip_times)),
+        "resolution": int(flip_small.shape[0]),
+    }
+
+
 def main() -> None:
     out_dir = ROOT / "presentation" / "data"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -68,6 +97,7 @@ def main() -> None:
             "delta": _round_list(delta, 10),
         },
         "simple": simple,
+        "map": _load_map_payload(),
     }
 
     js = "window.CHAOS_DATA = " + json.dumps(data, separators=(",", ":")) + ";\n"

@@ -43,9 +43,23 @@ def main() -> None:
         ROOT / "figures" / "divergence_semilog.png",
         ROOT / "figures" / "flip_time_fractal_map.png",
         ROOT / "animations" / "double_pendulum.gif",
+        ROOT / "presentation" / "index.html",
+        ROOT / "presentation" / "script.js",
+        ROOT / "presentation" / "style.css",
+        ROOT / "presentation" / "data" / "chaos_data.js",
     ]
     missing = [str(p) for p in required if not p.exists()]
     assert not missing, "Missing generated assets: " + ", ".join(missing)
+
+    deck = (ROOT / "presentation" / "index.html").read_text(encoding="utf-8")
+    script = (ROOT / "presentation" / "script.js").read_text(encoding="utf-8")
+    data_js = (ROOT / "presentation" / "data" / "chaos_data.js").read_text(encoding="utf-8")
+    assert "angle-space" in deck, "Presentation must include the angle-space bridge scene"
+    assert "Lyapunov formal" in deck, "Presentation must avoid overclaiming formal chaos proof"
+    assert "Cada pixel" in deck, "Map slide must explain how the global map is produced"
+    assert "renderMap" in script, "Presentation script must render the progressive map"
+    assert '"map"' in data_js and '"flipTimes"' in data_js, "Presentation data must include a map payload"
+    assert '"resolution":120' in data_js, "Presentation map payload must retain 14,400 initial conditions"
 
     print("ChaosLab smoke test passed")
     print(f"energy_relative_drift={rel_drift:.3e}")
