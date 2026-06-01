@@ -21,6 +21,7 @@ one-off slide deck.
 
 Video and presentation assets:
 
+- Live browser presentation: <https://thom-320.github.io/chaoslab-double-pendulum/>
 - [`animations/chaoslab_teaser.mp4`](animations/chaoslab_teaser.mp4): short visual teaser.
 - [`animations/chaoslab_pitch_5min.mp4`](animations/chaoslab_pitch_5min.mp4): five-minute rendered pitch.
 - [`presentation/index.html`](presentation/index.html): animated browser presentation for live explanation.
