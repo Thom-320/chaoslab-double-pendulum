@@ -1,27 +1,56 @@
 # ChaosLab: Double Pendulum as Classical Chaos
 
-**ChaosLab** es una simulación computacional del péndulo doble para un proyecto final de Física. El objetivo es visualizar cómo un sistema mecánico clásico, gobernado por ecuaciones deterministas, puede perder predictibilidad práctica por sensibilidad extrema a condiciones iniciales.
+ChaosLab is a computational physics project about the double pendulum. It uses
+numerical integration, energy checks, phase-space trajectories, flip-time maps,
+and animated presentation assets to show how a deterministic mechanical system
+can become practically unpredictable.
 
-La estética está inspirada en videos tipo 2swap / 3Blue1Brown: fondo oscuro, colores de alto contraste, trayectorias continuas, mapas de condiciones iniciales y una narrativa donde la visualización no adorna la explicación, sino que la lleva.
+The project was built for a Physics I final presentation, but the repository is
+organized as a reproducible simulation and visualization package rather than a
+one-off slide deck.
 
-## Pregunta central
+## Visual Preview
 
-¿Cómo cambia la predictibilidad de un sistema mecánico al pasar de un péndulo simple a un péndulo doble, y cómo se evidencia la sensibilidad a condiciones iniciales mediante simulación numérica, conservación de energía y mapas de condiciones iniciales?
+<p align="center">
+  <img src="animations/double_pendulum.gif" alt="Double pendulum trajectory animation" width="760">
+</p>
 
-## Qué incluye
+| Flip-time map | Mass trajectory | Energy conservation |
+| --- | --- | --- |
+| <img src="figures/flip_time_fractal_map.png" alt="Flip-time fractal map" width="280"> | <img src="figures/trajectory_mass2.png" alt="Trajectory of the second mass" width="280"> | <img src="figures/energy_vs_time.png" alt="Energy over time" width="280"> |
 
-- Modelo físico del péndulo doble como sistema de EDOs.
-- Simulación con `scipy.integrate.solve_ivp`.
-- Cálculo de energía cinética, potencial y total.
-- Comparación de dos trayectorias separadas inicialmente por una perturbación minúscula.
-- Mapa de condiciones iniciales: color = tiempo hasta el primer giro completo.
-- App interactiva en Streamlit.
-- Figuras y GIF listos para presentación.
-- Presentación HTML animada para exposición en vivo.
-- Guion y video corto estilo divulgación matemática.
-- Escena Manim opcional y renderizador Matplotlib para reforzar la explicación geométrica, sin hacer que Manim sea una dependencia obligatoria.
+Video and presentation assets:
 
-## Instalación
+- [`animations/chaoslab_teaser.mp4`](animations/chaoslab_teaser.mp4): short visual teaser.
+- [`animations/chaoslab_pitch_5min.mp4`](animations/chaoslab_pitch_5min.mp4): five-minute rendered pitch.
+- [`presentation/index.html`](presentation/index.html): animated browser presentation for live explanation.
+
+## Core Question
+
+How does predictability change when a simple pendulum becomes a double
+pendulum, and how can that loss of predictability be made visible through
+simulation?
+
+The repository answers this through three checks:
+
+- energy conservation, to make sure the numerical solution is physically
+  credible;
+- trajectory divergence, to show sensitivity to initial conditions;
+- flip-time maps, to expose the structure of the initial-condition space.
+
+## What Is Included
+
+- Double-pendulum equations of motion integrated with `scipy.integrate.solve_ivp`.
+- Kinetic, potential, and total-energy computation.
+- Divergence analysis for trajectories separated by a tiny initial
+  perturbation.
+- A vectorized flip-time map over initial angles.
+- A Streamlit app for interactive exploration.
+- Publication-ready figures, GIFs, and MP4 renders.
+- An HTML presentation with synchronized visual narrative.
+- Optional geometric animation support through Matplotlib and Manim.
+
+## Setup
 
 ```bash
 python -m venv .venv
@@ -29,45 +58,24 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Dependencia de sistema para video:
+System dependencies for optional exports:
 
 ```bash
 ffmpeg -version
-```
-
-Dependencia de sistema para el informe PDF:
-
-```bash
 latexmk -v
 pdflatex --version
 ```
 
-Si FFmpeg no existe, instala FFmpeg antes de renderizar MP4. Si `latexmk` o `pdflatex` no existen, instala una distribucion LaTeX antes de regenerar `report/informe_final.pdf`. Manim queda como ruta opcional; la entrega principal no depende de Manim.
+FFmpeg is required for MP4 generation. A LaTeX distribution is required only if
+you want to rebuild `report/informe_final.pdf`.
 
-## Apoyo visual opcional estilo Manim
-
-La presentación principal no depende de Manim. Si quieres generar un clip geométrico adicional con estética tipo 3Blue1Brown, usa el renderizador basado en Matplotlib:
-
-```bash
-python scripts/render_manim_style_geometry.py
-```
-
-Esto genera `animations/manim_style_geometry.mp4`. El MP4 no es necesario para ejecutar la app ni la presentación HTML.
-
-Si Manim ya está instalado, también puedes renderizar la escena programática:
-
-```bash
-pip install -r requirements-manim.txt
-manim -pqh manim/chaos_geometry_scene.py ChaosGeometryScene
-```
-
-## Generar figuras y GIF
+## Generate Assets
 
 ```bash
 python scripts/generate_assets.py
 ```
 
-Los resultados aparecen en:
+Generated outputs are written to:
 
 ```text
 figures/
@@ -75,41 +83,42 @@ animations/
 data/
 ```
 
-## Correr la app
+## Run the App
 
 ```bash
 streamlit run app.py
 ```
 
-## Presentación animada
+## Run the Presentation
 
-Primero exporta los datos compactos usados por la presentación:
+First export the compact data used by the browser presentation:
 
 ```bash
 python scripts/export_presentation_data.py
 ```
 
-Luego abre:
+Then open:
 
 ```text
 presentation/index.html
 ```
 
-Controles:
+Presentation controls:
 
-- Flecha derecha, espacio o botón `Siguiente`: avanzar.
-- Flecha izquierda o botón `Anterior`: retroceder.
-- `N` o botón `Notas`: mostrar/ocultar guion del presentador.
+- right arrow or space: next slide;
+- left arrow: previous slide;
+- `N`: toggle presenter notes.
 
-## Verificación y entregables finales
+## Verification
 
 ```bash
 python scripts/smoke_test.py
-python scripts/build_documents.py
-python scripts/render_pitch_video.py
 ```
 
-Entregables finales:
+The smoke test checks numerical stability, energy drift, trajectory divergence,
+and video-tool availability.
+
+## Final Artifacts
 
 ```text
 report/latex/informe_final.tex
@@ -122,12 +131,12 @@ animations/chaoslab_pitch_5min.mp4
 presentation/index.html
 ```
 
-## Estructura
+## Repository Layout
 
 ```text
-src/chaoslab/physics.py   # EDOs, energía, divergencia
-src/chaoslab/fractal.py   # mapa vectorizado de tiempo hasta flip
-src/chaoslab/visuals.py   # figuras y animaciones
+src/chaoslab/physics.py   Equations of motion, energy, divergence
+src/chaoslab/fractal.py   Vectorized flip-time map
+src/chaoslab/visuals.py   Figures and animations
 scripts/generate_assets.py
 scripts/render_pitch_video.py
 scripts/build_documents.py
@@ -141,12 +150,17 @@ report/informe_final.md
 presentation/index.html
 ```
 
-## Resultados esperados
+## Main Observations
 
-1. La trayectoria de la segunda masa forma patrones complejos aun cuando la energía total se conserva aproximadamente.
-2. Dos trayectorias con diferencia inicial de apenas `1e-6 rad` terminan separándose.
-3. El mapa de condiciones iniciales muestra regiones con fronteras complejas: pequeñas variaciones cambian el tiempo hasta el primer flip.
+1. The second mass traces complex paths while total energy remains nearly
+   conserved.
+2. Two trajectories separated by `1e-6 rad` diverge rapidly.
+3. The flip-time map has sharp boundaries: small changes in initial conditions
+   can change whether and when the pendulum completes a flip.
 
-## Nota sobre IA / ML
+## Scope
 
-No se usa aprendizaje automático como núcleo porque el fenómeno físico ya es rico y defendible sin desplazar el foco del curso. Si se añade IA, debe ir como extensión: por ejemplo, entrenar un modelo liviano para clasificar si una condición inicial hará flip antes de cierto tiempo a partir de los datos generados por `flip_time_map`. La tesis central del proyecto sigue siendo física: dinámica no lineal, energía mecánica y sensibilidad a condiciones iniciales.
+The project focuses on classical mechanics and numerical visualization. Machine
+learning is not part of the core claim; the physical system already provides a
+clear setting for nonlinear dynamics, conservation laws, and sensitivity to
+initial conditions.
