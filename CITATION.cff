@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: |
+  If you use this visualization in academic or educational work, please
+  cite the repository directly.
+title: "ChaosLab Double Pendulum: Computational Physics Visualization"
+type: software
+authors:
+  - family-names: Chisica
+    given-names: Thomas
+    affiliation: Universidad del Rosario
+    orcid: ""
+date-released: 2026-05-25
+url: "https://github.com/Thom-320/chaoslab-double-pendulum"
+repository-code: "https://github.com/Thom-320/chaoslab-double-pendulum"
+license: MIT
+keywords:
+  - chaos-theory
+  - double-pendulum
+  - numerical-methods
+  - scientific-visualization
+  - streamlit
+  - scipy
