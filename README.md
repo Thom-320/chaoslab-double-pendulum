@@ -9,6 +9,16 @@ The project was built for a Physics I final presentation, but the repository is
 organized as a reproducible simulation and visualization package rather than a
 one-off slide deck.
 
+## Read in five minutes
+
+1. Open the [browser presentation](https://thom-320.github.io/chaoslab-double-pendulum/) for the physical question and visual explanation.
+2. Inspect the [equations and integration code](src/chaoslab/physics.py), then the [numerical smoke checks](scripts/smoke_test.py).
+3. Read the limitations below: this is a course project in numerical dynamics, not an ML model or a novel chaos theorem.
+
+No need to regenerate videos or the full flip-time map to inspect the project.
+Energy conservation is an integration diagnostic, not proof of long-horizon
+trajectory accuracy in a chaotic system.
+
 ## Visual Preview
 
 <p align="center">
@@ -47,7 +57,7 @@ The repository answers this through three checks:
   perturbation.
 - A vectorized flip-time map over initial angles.
 - A Streamlit app for interactive exploration.
-- Publication-ready figures, GIFs, and MP4 renders.
+- Figures, GIFs, and MP4 renders for scientific communication.
 - An HTML presentation with synchronized visual narrative.
 - Optional geometric animation support through Matplotlib and Manim.
 
