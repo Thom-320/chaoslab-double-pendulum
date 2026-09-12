@@ -11,6 +11,11 @@ one-off slide deck.
 
 ## Read in five minutes
 
+**Scientific-computing perspective:** the project connects differential
+equations, numerical integration and diagnostic plots in an inspectable Python
+implementation. Read the energy and trajectory checks together: a small energy
+error alone does not establish accurate long-horizon prediction.
+
 1. Open the [browser presentation](https://thom-320.github.io/chaoslab-double-pendulum/) for the physical question and visual explanation.
 2. Inspect the [equations and integration code](src/chaoslab/physics.py), then the [numerical smoke checks](scripts/smoke_test.py).
 3. Read the limitations below: this is a course project in numerical dynamics, not an ML model or a novel chaos theorem.
