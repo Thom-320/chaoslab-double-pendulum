@@ -9,20 +9,15 @@ The project was built for a Physics I final presentation, but the repository is
 organized as a reproducible simulation and visualization package rather than a
 one-off slide deck.
 
-## Read in five minutes
+## Where to start
 
-**Scientific-computing perspective:** the project connects differential
-equations, numerical integration and diagnostic plots in an inspectable Python
-implementation. Read the energy and trajectory checks together: a small energy
-error alone does not establish accurate long-horizon prediction.
+1. Open the [browser presentation](https://thom-320.github.io/chaoslab-double-pendulum/) for the physical question and the visual explanation.
+2. Read the [equations and integration code](src/chaoslab/physics.py), then the [numerical smoke checks](scripts/smoke_test.py).
+3. Read the limitations below. This is a course project in numerical dynamics.
 
-1. Open the [browser presentation](https://thom-320.github.io/chaoslab-double-pendulum/) for the physical question and visual explanation.
-2. Inspect the [equations and integration code](src/chaoslab/physics.py), then the [numerical smoke checks](scripts/smoke_test.py).
-3. Read the limitations below: this is a course project in numerical dynamics, not an ML model or a novel chaos theorem.
-
-No need to regenerate videos or the full flip-time map to inspect the project.
-Energy conservation is an integration diagnostic, not proof of long-horizon
-trajectory accuracy in a chaotic system.
+You do not need to regenerate the videos or the full flip-time map. Read the energy
+and trajectory checks together: in a chaotic system, a small energy error does not
+by itself mean the long-horizon trajectory is accurate.
 
 ## Visual Preview
 
