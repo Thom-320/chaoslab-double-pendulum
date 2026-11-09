@@ -16,3 +16,7 @@ report/latex/*.out
 report/latex/*Notes.bib
 report/latex/informe_final.pdf
 node_modules/
+
+# Local agent tooling (installed per machine)
+.agents/
+skills-lock.json
