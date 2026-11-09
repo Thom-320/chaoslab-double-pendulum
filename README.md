@@ -13,7 +13,7 @@ one-off slide deck.
 
 1. Open the [browser presentation](https://thom-320.github.io/chaoslab-double-pendulum/) for the physical question and the visual explanation.
 2. Read the [equations and integration code](src/chaoslab/physics.py), then the [numerical smoke checks](scripts/smoke_test.py).
-3. Read the [scope note](#scope) at the end. This is a course project in numerical dynamics.
+3. Read the [scope note](#scope) at the end. This is a course project in numerical dynamics, not an ML model or a novel chaos theorem.
 
 You do not need to regenerate the videos or the full flip-time map. Read the energy
 and trajectory checks together: in a chaotic system, a small energy error does not
@@ -126,9 +126,9 @@ Presentation controls:
 python scripts/smoke_test.py
 ```
 
-The smoke test checks numerical stability, energy drift (relative drift below 1e-4
-over a 6 s run), trajectory divergence, the flip-time map and the presentation
-data, and reports whether FFmpeg is available.
+The smoke test asserts a relative energy drift below 1e-4 over a 6 s run, a finite
+divergence between two nearby trajectories, a finite flip-time map and the
+presentation data, and reports whether FFmpeg is available.
 
 ## Final Artifacts
 
